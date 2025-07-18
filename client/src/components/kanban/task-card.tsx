@@ -1,0 +1,90 @@
+import { Task } from "@shared/schema";
+import { useDragTask } from "@/lib/drag-drop";
+import { Button } from "@/components/ui/button";
+import { Clock, Edit, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
+
+interface TaskCardProps {
+  task: Task;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  const { isDragging, drag } = useDragTask(task);
+
+  const getPriorityColor = (priority: string) => {
+    const colors = {
+      high: "bg-red-100 text-red-800",
+      medium: "bg-amber-100 text-amber-800",
+      low: "bg-green-100 text-green-800",
+    };
+    return colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  };
+
+  const getPriorityText = (priority: string) => {
+    const texts = {
+      high: "High Priority",
+      medium: "Medium Priority",
+      low: "Low Priority",
+    };
+    return texts[priority as keyof typeof texts] || "Unknown Priority";
+  };
+
+  const formatTimeAgo = (date: Date | null) => {
+    if (!date) return "Unknown";
+    return formatDistanceToNow(new Date(date), { addSuffix: true });
+  };
+
+  return (
+    <div
+      ref={drag}
+      className={cn(
+        "bg-white border border-gray-200 rounded-lg p-4 cursor-grab hover:shadow-md transition-all duration-200 group",
+        isDragging && "opacity-70 rotate-1 shadow-lg"
+      )}
+      draggable
+    >
+      <div className="flex items-start justify-between mb-2">
+        <h3 className="font-medium text-gray-900 flex-1 pr-2">
+          {task.title}
+        </h3>
+        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEdit}
+            className="text-gray-400 hover:text-blue-500 transition-colors p-1 h-6 w-6"
+          >
+            <Edit size={12} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            className="text-gray-400 hover:text-red-500 transition-colors p-1 h-6 w-6"
+          >
+            <Trash2 size={12} />
+          </Button>
+        </div>
+      </div>
+
+      {task.description && (
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          {task.description}
+        </p>
+      )}
+
+      <div className="flex items-center justify-between">
+        <span className={cn("text-xs px-2 py-1 rounded-full font-medium", getPriorityColor(task.priority))}>
+          {getPriorityText(task.priority)}
+        </span>
+        <div className="flex items-center space-x-1 text-xs text-gray-500">
+          <Clock size={12} />
+          <span>{formatTimeAgo(task.createdAt)}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
