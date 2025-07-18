@@ -80,10 +80,10 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs text-gray-500">Progress</span>
-          <span className="text-xs text-gray-500">{task.progress * 20}%</span>
+          <span className="text-xs text-gray-500">{task.progress != null ? task.progress * 20 : 0}%</span>
         </div>
         <Slider
-          value={[task.progress]}
+          value={[task.progress != null ? task.progress : 0]}
           max={5}
           step={1}
           className="w-full"
