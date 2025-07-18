@@ -20,6 +20,14 @@ export const tasks = pgTable("tasks", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const comments = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  author: text("author").notNull(),
+  taskId: integer("task_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertColumnSchema = createInsertSchema(columns).omit({
   id: true,
 });
@@ -29,10 +37,17 @@ export const insertTaskSchema = createInsertSchema(tasks).omit({
   createdAt: true,
 });
 
+export const insertCommentSchema = createInsertSchema(comments).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertColumn = z.infer<typeof insertColumnSchema>;
 export type Column = typeof columns.$inferSelect;
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type Task = typeof tasks.$inferSelect;
+export type InsertComment = z.infer<typeof insertCommentSchema>;
+export type Comment = typeof comments.$inferSelect;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
