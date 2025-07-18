@@ -113,6 +113,7 @@ export default function TaskModal({
         columnId: task.columnId,
         position: task.position,
         progress: task.progress || 0,
+        assignees: task.assignees || ""
       });
     } else if (selectedColumnId || !isEditing) {
       form.reset({
@@ -122,7 +123,7 @@ export default function TaskModal({
         columnId: selectedColumnId,
         position: 0,
         progress: 0,
-        assignees: assignees: task.assignees || "",
+        assignees: "",
       });
     }
   }, [task, selectedColumnId, form]);

@@ -97,11 +97,11 @@ export default function KanbanPage() {
             <div className="max-w-full px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <SidebarTrigger />
+                  
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <div className="w-4 h-4 bg-white rounded-sm"></div>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center border-sm">
+                      <SidebarTrigger className="text-white bg-black"/>
+                    </div>    
                     <h1 className="text-xl font-semibold text-gray-900">Kanban Board</h1>
                   </div>
                 </div>
