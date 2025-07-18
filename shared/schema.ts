@@ -16,6 +16,7 @@ export const tasks = pgTable("tasks", {
   priority: text("priority").notNull().default("medium"),
   columnId: integer("column_id").notNull(),
   position: integer("position").notNull(),
+  progress: integer("progress").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

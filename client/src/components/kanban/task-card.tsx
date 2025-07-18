@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { Slider } from "@/components/ui/slider";
 
 interface TaskCardProps {
   task: Task;
@@ -75,6 +76,20 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           {task.description}
         </p>
       )}
+
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs text-gray-500">Progress</span>
+          <span className="text-xs text-gray-500">{task.progress * 20}%</span>
+        </div>
+        <Slider
+          value={[task.progress]}
+          max={5}
+          step={1}
+          className="w-full"
+          disabled
+        />
+      </div>
 
       <div className="flex items-center justify-between">
         <span className={cn("text-xs px-2 py-1 rounded-full font-medium", getPriorityColor(task.priority))}>

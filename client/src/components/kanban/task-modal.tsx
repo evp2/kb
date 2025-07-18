@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 
 const taskFormSchema = insertTaskSchema.extend({
   title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
@@ -37,6 +38,7 @@ const taskFormSchema = insertTaskSchema.extend({
   priority: z.enum(["low", "medium", "high"]).default("medium"),
   columnId: z.number().min(1, "Column is required"),
   position: z.number().default(0),
+  progress: z.number().min(0).max(5).default(0),
 });
 
 type TaskFormValues = z.infer<typeof taskFormSchema>;
@@ -68,6 +70,7 @@ export default function TaskModal({
       priority: "medium",
       columnId: selectedColumnId || columns[0]?.id || 1,
       position: 0,
+      progress: 0,
     },
   });
 
@@ -80,6 +83,7 @@ export default function TaskModal({
         priority: task.priority as "low" | "medium" | "high",
         columnId: task.columnId,
         position: task.position,
+        progress: task.progress || 0,
       });
     } else if (selectedColumnId) {
       form.reset({
@@ -88,6 +92,7 @@ export default function TaskModal({
         priority: "medium",
         columnId: selectedColumnId,
         position: 0,
+        progress: 0,
       });
     }
   }, [task, selectedColumnId, form]);
@@ -239,6 +244,26 @@ export default function TaskModal({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="progress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Progress ({field.value * 20}%)</FormLabel>
+                  <FormControl>
+                    <Slider
+                      value={[field.value]}
+                      onValueChange={(value) => field.onChange(value[0])}
+                      max={5}
+                      step={1}
+                      className="w-full"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
