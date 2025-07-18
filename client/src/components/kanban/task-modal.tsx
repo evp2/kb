@@ -430,7 +430,7 @@ export default function TaskModal({
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm text-gray-500">No comments yet. Be the first to add one!</p>
+                      <p className="text-sm text-gray-500">No comments yet. </p>
                     )}
                   </div>
                 </>
