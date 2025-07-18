@@ -18,8 +18,8 @@ interface KanbanSidebarProps {
 
 export default function KanbanSidebar({ onAddTask, onAddColumn }: KanbanSidebarProps) {
   return (
-    <Sidebar>
-      <SidebarContent>
+    <Sidebar className="bg-white border-r border-gray-200">
+      <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Actions</SidebarGroupLabel>
           <SidebarGroupContent>
