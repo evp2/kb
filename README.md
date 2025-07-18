@@ -2,10 +2,6 @@
 
 This is a full-stack Kanban board application built with React, Express, and TypeScript. The application provides a drag-and-drop interface for managing tasks across customizable columns, similar to tools like Trello or Jira.
 
-## User Preferences
-
-Preferred communication style: Simple, everyday language.
-
 ## System Architecture
 
 The application follows a modern full-stack architecture with clear separation between frontend and backend concerns:
