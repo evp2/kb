@@ -6,8 +6,9 @@ import SearchBar from "@/components/kanban/search-bar";
 import TaskModal from "@/components/kanban/task-modal";
 import ColumnModal from "@/components/kanban/column-modal";
 import DeleteModal from "@/components/kanban/delete-modal";
-import { Button } from "@/components/ui/button";
-import { Plus, Columns, Users, Menu } from "lucide-react";
+import KanbanSidebar from "@/components/kanban/kanban-sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Users } from "lucide-react";
 
 export default function KanbanPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -83,67 +84,58 @@ export default function KanbanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-full px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <Menu className="text-white" size={16} />
-                </div>
-                <h1 className="text-xl font-semibold text-gray-900">Kanban Board</h1>
-              </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className="flex-1 max-w-md mx-8">
-              <SearchBar value={searchQuery} onChange={setSearchQuery} />
-            </div>
-
-            <div className="flex items-center space-x-3">
-              {/* Add Task Button */}
-              <Button
-                onClick={() => handleOpenTaskModal()}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"
-              >
-                <Plus size={16} />
-                <span>Add Task</span>
-              </Button>
-
-              {/* Add Column Button */}
-              <Button
-                variant="outline"
-                onClick={() => setIsColumnModalOpen(true)}
-                className="border border-gray-300 hover:border-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"
-              >
-                <Columns size={16} />
-                <span>Add Column</span>
-              </Button>
-
-              {/* User Profile */}
-              <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <Users className="text-gray-600" size={16} />
-                </div>
-                <span className="text-sm font-medium text-gray-700">John Doe</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="p-6">
-        <KanbanBoard
-          columns={columns}
-          tasks={filteredTasks}
-          onEditTask={handleOpenTaskModal}
-          onDeleteTask={handleOpenDeleteModal}
-          onAddTask={handleOpenTaskModal}
+    <SidebarProvider>
+      <div className="min-h-screen bg-gray-50 font-sans flex">
+        <KanbanSidebar
+          onAddTask={() => handleOpenTaskModal()}
+          onAddColumn={() => setIsColumnModalOpen(true)}
         />
-      </main>
+        
+        <SidebarInset className="flex-1">
+          {/* Header */}
+          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+            <div className="max-w-full px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <SidebarTrigger />
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <div className="w-4 h-4 bg-white rounded-sm"></div>
+                    </div>
+                    <h1 className="text-xl font-semibold text-gray-900">Kanban Board</h1>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="flex-1 max-w-md mx-8">
+                  <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  {/* User Profile */}
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                      <Users className="text-gray-600" size={16} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">John Doe</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="p-6">
+            <KanbanBoard
+              columns={columns}
+              tasks={filteredTasks}
+              onEditTask={handleOpenTaskModal}
+              onDeleteTask={handleOpenDeleteModal}
+              onAddTask={handleOpenTaskModal}
+            />
+          </main>
+        </SidebarInset>
+      </div>
 
       {/* Modals */}
       <TaskModal
@@ -164,6 +156,6 @@ export default function KanbanPage() {
         onClose={handleCloseDeleteModal}
         taskId={deletingTaskId}
       />
-    </div>
+    </SidebarProvider>
   );
 }
