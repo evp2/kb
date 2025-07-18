@@ -1,18 +1,20 @@
 import { Task } from "@shared/schema";
 import { useDragTask } from "@/lib/drag-drop";
 import { Button } from "@/components/ui/button";
-import { Clock, Edit, Trash2 } from "lucide-react";
+import { Clock, Edit, Trash2, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { Slider } from "@/components/ui/slider";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface TaskCardProps {
   task: Task;
   onEdit: () => void;
   onDelete: () => void;
+  showSlider?: boolean;
 }
 
-export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+export default function TaskCard({ task, onEdit, onDelete, showSlider = true }: TaskCardProps) {
   const { isDragging, drag } = useDragTask(task);
 
   const getPriorityColor = (priority: string) => {
@@ -36,6 +38,15 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   const formatTimeAgo = (date: Date | null) => {
     if (!date) return "Unknown";
     return formatDistanceToNow(new Date(date), { addSuffix: true });
+  };
+
+  const getAssigneesList = (assignees: string | null) => {
+    if (!assignees) return [];
+    return assignees.split(',').map(name => name.trim()).filter(name => name.length > 0);
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(part => part[0]).join('').toUpperCase();
   };
 
   return (
@@ -77,19 +88,44 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         </p>
       )}
 
-      <div className="mb-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-500">Progress</span>
-          <span className="text-xs text-gray-500">{task.progress != null ? task.progress * 20 : 0}%</span>
+      {showSlider && (
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-gray-500">Progress</span>
+            <span className="text-xs text-gray-500">{task.progress != null ? task.progress * 20 : 0}%</span>
+          </div>
+          <Slider
+            value={[task.progress != null ? task.progress : 0]}
+            max={5}
+            step={1}
+            className="w-full"
+            disabled
+          />
         </div>
-        <Slider
-          value={[task.progress != null ? task.progress : 0]}
-          max={5}
-          step={1}
-          className="w-full"
-          disabled
-        />
-      </div>
+      )}
+
+      {task.assignees && (
+        <div className="mb-3">
+          <div className="flex items-center space-x-2 mb-2">
+            <Users size={12} className="text-gray-500" />
+            <span className="text-xs text-gray-500">Assignees</span>
+          </div>
+          <div className="flex items-center space-x-1 flex-wrap">
+            {getAssigneesList(task.assignees).slice(0, 3).map((assignee, index) => (
+              <Avatar key={index} className="h-6 w-6">
+                <AvatarFallback className="text-xs bg-blue-100 text-blue-700">
+                  {getInitials(assignee)}
+                </AvatarFallback>
+              </Avatar>
+            ))}
+            {getAssigneesList(task.assignees).length > 3 && (
+              <span className="text-xs text-gray-500 ml-1">
+                +{getAssigneesList(task.assignees).length - 3} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <span className={cn("text-xs px-2 py-1 rounded-full font-medium", getPriorityColor(task.priority))}>

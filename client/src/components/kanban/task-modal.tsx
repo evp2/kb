@@ -40,6 +40,7 @@ const taskFormSchema = insertTaskSchema.extend({
   columnId: z.number().min(1, "Column is required"),
   position: z.number().default(0),
   progress: z.number().min(0).max(5).default(0),
+  assignees: z.string().optional(),
 });
 
 const commentFormSchema = insertCommentSchema.extend({
@@ -79,6 +80,7 @@ export default function TaskModal({
       columnId: selectedColumnId || columns[0]?.id || 1,
       position: 0,
       progress: 0,
+      assignees: "",
     },
   });
 
@@ -112,7 +114,7 @@ export default function TaskModal({
         position: task.position,
         progress: task.progress || 0,
       });
-    } else if (selectedColumnId) {
+    } else if (selectedColumnId || !isEditing) {
       form.reset({
         title: "",
         description: "",
@@ -120,6 +122,7 @@ export default function TaskModal({
         columnId: selectedColumnId,
         position: 0,
         progress: 0,
+        assignees: assignees: task.assignees || "",
       });
     }
   }, [task, selectedColumnId, form]);
@@ -225,7 +228,8 @@ export default function TaskModal({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Task Details</TabsTrigger>
-            <TabsTrigger value="comments">Comments ({comments.length})</TabsTrigger>
+            <TabsTrigger value="comments" 
+              className={isEditing ? "" : "disabled disabled:pointer-events-none disabled:opacity-50"}>Comments ({comments.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="details" className="space-y-4">
@@ -310,6 +314,23 @@ export default function TaskModal({
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="assignees"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assignees</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter assignee names separated by commas..."
+                          {...field}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

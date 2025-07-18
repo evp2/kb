@@ -88,6 +88,7 @@ export default function KanbanColumn({
             task={task}
             onEdit={() => onEditTask(column.id, task)}
             onDelete={() => onDeleteTask(task.id)}
+            showSlider={!!column.showSlider}
           />
         ))}
       </div>

@@ -2,11 +2,14 @@ import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const assigneesEnum = z.enum(["Evan P"]);
+
 export const columns = pgTable("columns", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   color: text("color").notNull().default("blue"),
   position: integer("position").notNull(),
+  showSlider: integer("show_slider").notNull().default(1),
 });
 
 export const tasks = pgTable("tasks", {
@@ -17,6 +20,7 @@ export const tasks = pgTable("tasks", {
   columnId: integer("column_id").notNull(),
   position: integer("position").notNull(),
   progress: integer("progress").notNull().default(0),
+  assignees: text("assignees"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

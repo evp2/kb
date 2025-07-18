@@ -65,6 +65,8 @@ export class MemStorage implements IStorage {
         priority: "high",
         columnId: 1,
         position: 0,
+        progress: 0,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
       {
@@ -74,6 +76,8 @@ export class MemStorage implements IStorage {
         priority: "medium",
         columnId: 1,
         position: 1,
+        progress: 0,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -83,6 +87,8 @@ export class MemStorage implements IStorage {
         priority: "low",
         columnId: 1,
         position: 2,
+        progress: 0,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
       },
       {
@@ -92,6 +98,8 @@ export class MemStorage implements IStorage {
         priority: "high",
         columnId: 2,
         position: 0,
+        progress: 2,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
       },
       {
@@ -101,6 +109,8 @@ export class MemStorage implements IStorage {
         priority: "medium",
         columnId: 2,
         position: 1,
+        progress: 1,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -110,6 +120,8 @@ export class MemStorage implements IStorage {
         priority: "low",
         columnId: 3,
         position: 0,
+        progress: 5,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       },
       {
@@ -119,6 +131,8 @@ export class MemStorage implements IStorage {
         priority: "medium",
         columnId: 3,
         position: 1,
+        progress: 5,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
       {
@@ -128,6 +142,8 @@ export class MemStorage implements IStorage {
         priority: "low",
         columnId: 3,
         position: 2,
+        progress: 5,
+        assignees: "Evan P",
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -137,6 +153,8 @@ export class MemStorage implements IStorage {
         priority: "medium",
         columnId: 3,
         position: 3,
+        progress: 4,
+        assignees: "Evan P",
         createdAt: new Date(),
       },
     ];

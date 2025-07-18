@@ -14,6 +14,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,11 +23,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const columnFormSchema = insertColumnSchema.extend({
   title: z.string().min(1, "Title is required").max(50, "Title must be less than 50 characters"),
   color: z.enum(["red", "blue", "green", "yellow", "purple", "gray"]).default("blue"),
   position: z.number().default(0),
+  showSlider: z.number().min(0).max(1).default(1), // Added showSlider field
 });
 
 type ColumnFormValues = z.infer<typeof columnFormSchema>;
@@ -55,6 +65,7 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
       title: "",
       color: "blue",
       position: 0,
+      showSlider: 1, // Added showSlider default value
     },
   });
 
@@ -140,6 +151,27 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                     </div>
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="showSlider"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Show Progress Slider</FormLabel>
+                    <FormDescription>
+                      Display progress sliders on task cards in this column
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value === 1}
+                      onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />
