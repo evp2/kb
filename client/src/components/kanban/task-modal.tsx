@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Task, Column, insertTaskSchema } from "@shared/schema";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Task, Column, insertTaskSchema, insertCommentSchema, Comment } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -42,7 +42,13 @@ const taskFormSchema = insertTaskSchema.extend({
   progress: z.number().min(0).max(5).default(0),
 });
 
+const commentFormSchema = insertCommentSchema.extend({
+  content: z.string().min(1, "Comment cannot be empty").max(500, "Comment must be less than 500 characters"),
+  author: z.string().min(1, "Author is required"),
+});
+
 type TaskFormValues = z.infer<typeof taskFormSchema>;
+type CommentFormValues = z.infer<typeof commentFormSchema>;
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -62,6 +68,7 @@ export default function TaskModal({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const isEditing = !!task;
+  const [activeTab, setActiveTab] = useState("details");
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -73,6 +80,25 @@ export default function TaskModal({
       position: 0,
       progress: 0,
     },
+  });
+
+  const commentForm = useForm<CommentFormValues>({
+    resolver: zodResolver(commentFormSchema),
+    defaultValues: {
+      content: "",
+      author: "",
+    },
+  });
+
+  // Fetch comments for the task
+  const { data: comments = [] } = useQuery<Comment[]>({
+    queryKey: ["/api/comments", task?.id],
+    queryFn: async () => {
+      if (!task?.id) return [];
+      const response = await apiRequest("GET", `/api/comments/${task.id}`);
+      return response.json();
+    },
+    enabled: !!task?.id,
   });
 
   // Update form when task or selectedColumnId changes
@@ -142,6 +168,32 @@ export default function TaskModal({
     },
   });
 
+  const createCommentMutation = useMutation({
+    mutationFn: async (data: CommentFormValues) => {
+      if (!task?.id) throw new Error("Task ID is required");
+      const response = await apiRequest("POST", "/api/comments", {
+        ...data,
+        taskId: task.id,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/comments", task?.id] });
+      commentForm.reset();
+      toast({
+        title: "Comment added successfully",
+        description: "Your comment has been added to the task.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error adding comment",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: TaskFormValues) => {
     if (isEditing) {
       updateTaskMutation.mutate(data);
@@ -150,8 +202,14 @@ export default function TaskModal({
     }
   };
 
+  const onCommentSubmit = (data: CommentFormValues) => {
+    createCommentMutation.mutate(data);
+  };
+
   const handleClose = () => {
     form.reset();
+    commentForm.reset();
+    setActiveTab("details");
     onClose();
   };
 
@@ -164,10 +222,10 @@ export default function TaskModal({
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="details" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Task Details</TabsTrigger>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
+            <TabsTrigger value="comments">Comments ({comments.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="details" className="space-y-4">
@@ -301,24 +359,81 @@ export default function TaskModal({
           <TabsContent value="comments" className="space-y-4">
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900">Comments</h3>
+              
               {task ? (
-                <div className="space-y-3">
-                  <div className="text-sm text-gray-500">
-                    Comments will be displayed here once the backend is implemented.
-                  </div>
-                  {/* Placeholder for comments list */}
-                  <div className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="text-sm font-medium text-gray-900">John Doe</span>
-                          <span className="text-xs text-gray-500">2 hours ago</span>
+                <>
+                  {/* Add Comment Form */}
+                  <Form {...commentForm}>
+                    <form onSubmit={commentForm.handleSubmit(onCommentSubmit)} className="space-y-3">
+                      <FormField
+                        control={commentForm.control}
+                        name="author"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Your Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter your name..."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={commentForm.control}
+                        name="content"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Comment</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Write your comment..."
+                                rows={3}
+                                className="resize-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <Button
+                        type="submit"
+                        disabled={createCommentMutation.isPending}
+                        size="sm"
+                      >
+                        Add Comment
+                      </Button>
+                    </form>
+                  </Form>
+
+                  {/* Comments List */}
+                  <div className="space-y-3">
+                    {comments.length > 0 ? (
+                      comments.map((comment) => (
+                        <div key={comment.id} className="border border-gray-200 rounded-lg p-3">
+                          <div className="flex items-start space-x-3">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <span className="text-sm font-medium text-gray-900">{comment.author}</span>
+                                <span className="text-xs text-gray-500">
+                                  {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : "Unknown"}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">{comment.content}</p>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-sm text-gray-700">This is a sample comment to show the layout.</p>
-                      </div>
-                    </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No comments yet. Be the first to add one!</p>
+                    )}
                   </div>
-                </div>
+                </>
               ) : (
                 <p className="text-sm text-gray-500">Create the task first to add comments.</p>
               )}
