@@ -19,6 +19,7 @@ export interface IStorage {
   updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined>;
   deleteTask(id: number): Promise<boolean>;
   moveTask(taskId: number, newColumnId: number, newPosition: number): Promise<Task | undefined>;
+  moveColumn(columnId: number, newPosition: number): Promise<Column | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -239,6 +240,34 @@ export class MemStorage implements IStorage {
     const updatedTask = { ...task, columnId: newColumnId, position: newPosition };
     this.tasks.set(taskId, updatedTask);
     return updatedTask;
+  }
+
+  async moveColumn(columnId: number, newPosition: number): Promise<Column | undefined> {
+    const column = this.columns.get(columnId);
+    if (!column) return undefined;
+
+    const allColumns = Array.from(this.columns.values()).sort((a, b) => a.position - b.position);
+    const oldPosition = column.position;
+
+    // Update positions of other columns
+    allColumns.forEach(col => {
+      if (col.id === columnId) {
+        // Update the moved column
+        this.columns.set(col.id, { ...col, position: newPosition });
+      } else if (newPosition < oldPosition) {
+        // Moving left: shift columns right
+        if (col.position >= newPosition && col.position < oldPosition) {
+          this.columns.set(col.id, { ...col, position: col.position + 1 });
+        }
+      } else {
+        // Moving right: shift columns left
+        if (col.position > oldPosition && col.position <= newPosition) {
+          this.columns.set(col.id, { ...col, position: col.position - 1 });
+        }
+      }
+    });
+
+    return this.columns.get(columnId);
   }
 }
 

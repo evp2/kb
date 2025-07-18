@@ -5,6 +5,7 @@ import { Column, Task } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import KanbanColumn from "./kanban-column";
+import ColumnDropZone from "./column-drop-zone";
 
 interface KanbanBoardProps {
   columns: Column[];
@@ -48,8 +49,35 @@ export default function KanbanBoard({
     },
   });
 
+  const moveColumnMutation = useMutation({
+    mutationFn: async ({ columnId, position }: { columnId: number; position: number }) => {
+      const response = await apiRequest("PUT", `/api/columns/${columnId}/move`, {
+        position,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/columns"] });
+      toast({
+        title: "Column moved successfully",
+        description: "The column has been reordered.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error moving column",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleMoveTask = (taskId: number, targetColumnId: number, targetPosition: number) => {
     moveTaskMutation.mutate({ taskId, columnId: targetColumnId, position: targetPosition });
+  };
+
+  const handleMoveColumn = (columnId: number, targetPosition: number) => {
+    moveColumnMutation.mutate({ columnId, position: targetPosition });
   };
 
   const getTasksForColumn = (columnId: number) => {
@@ -61,16 +89,22 @@ export default function KanbanBoard({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex space-x-6 overflow-x-auto min-h-screen">
-        {columns.map((column) => (
-          <KanbanColumn
+        {columns.map((column, index) => (
+          <ColumnDropZone
             key={column.id}
-            column={column}
-            tasks={getTasksForColumn(column.id)}
-            onMoveTask={handleMoveTask}
-            onEditTask={onEditTask}
-            onDeleteTask={onDeleteTask}
-            onAddTask={onAddTask}
-          />
+            position={index}
+            onMoveColumn={handleMoveColumn}
+          >
+            <KanbanColumn
+              column={column}
+              tasks={getTasksForColumn(column.id)}
+              onMoveTask={handleMoveTask}
+              onMoveColumn={handleMoveColumn}
+              onEditTask={onEditTask}
+              onDeleteTask={onDeleteTask}
+              onAddTask={onAddTask}
+            />
+          </ColumnDropZone>
         ))}
       </div>
     </DndProvider>

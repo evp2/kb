@@ -154,6 +154,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/columns/:id/move", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { position } = req.body;
+
+      if (typeof position !== 'number') {
+        return res.status(400).json({ message: "Invalid position" });
+      }
+
+      const column = await storage.moveColumn(id, position);
+
+      if (!column) {
+        return res.status(404).json({ message: "Column not found" });
+      }
+
+      res.json(column);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to move column" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

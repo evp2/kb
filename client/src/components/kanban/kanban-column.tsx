@@ -1,5 +1,5 @@
 import { Column, Task } from "@shared/schema";
-import { useDropColumn } from "@/lib/drag-drop";
+import { useDropTask, useDragColumn } from "@/lib/drag-drop";
 import { Button } from "@/components/ui/button";
 import { Plus, MoreHorizontal } from "lucide-react";
 import TaskCard from "./task-card";
@@ -9,6 +9,7 @@ interface KanbanColumnProps {
   column: Column;
   tasks: Task[];
   onMoveTask: (taskId: number, targetColumnId: number, targetPosition: number) => void;
+  onMoveColumn: (columnId: number, targetPosition: number) => void;
   onEditTask: (columnId: number, task?: Task) => void;
   onDeleteTask: (taskId: number) => void;
   onAddTask: (columnId: number) => void;
@@ -18,11 +19,13 @@ export default function KanbanColumn({
   column,
   tasks,
   onMoveTask,
+  onMoveColumn,
   onEditTask,
   onDeleteTask,
   onAddTask,
 }: KanbanColumnProps) {
-  const { isOver, canDrop, drop } = useDropColumn(column.id, onMoveTask);
+  const { isOver: isTaskOver, canDrop: canDropTask, drop: dropTask } = useDropTask(column.id, onMoveTask);
+  const { isDragging: isColumnDragging, drag: dragColumn } = useDragColumn(column);
 
   const getColumnIndicatorColor = (color: string) => {
     const colors = {
@@ -50,12 +53,20 @@ export default function KanbanColumn({
 
   return (
     <div
-      ref={drop}
+      ref={dragColumn}
       className={cn(
-        "flex-shrink-0 w-80 bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition-all duration-200",
-        isOver && canDrop && "bg-blue-50 border-blue-300 border-2 border-dashed"
+        "flex-shrink-0 w-80 bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition-all duration-200 cursor-move",
+        isColumnDragging && "opacity-50 transform rotate-2",
+        "hover:shadow-md"
       )}
     >
+      <div
+        ref={dropTask}
+        className={cn(
+          "h-full",
+          isTaskOver && canDropTask && "bg-blue-50 border-blue-300 border-2 border-dashed rounded-lg"
+        )}
+      >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <div className={cn("w-3 h-3 rounded-full", getColumnIndicatorColor(column.color))} />
@@ -82,14 +93,15 @@ export default function KanbanColumn({
       </div>
 
       {/* Add Task Button */}
-      <Button
-        variant="outline"
-        onClick={() => onAddTask(column.id)}
-        className="w-full border-2 border-dashed border-gray-300 rounded-lg p-3 text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-all duration-200 flex items-center justify-center space-x-2"
-      >
-        <Plus size={16} />
-        <span>Add a task</span>
-      </Button>
+        <Button
+          variant="outline"
+          onClick={() => onAddTask(column.id)}
+          className="w-full border-2 border-dashed border-gray-300 rounded-lg p-3 text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-all duration-200 flex items-center justify-center space-x-2"
+        >
+          <Plus size={16} />
+          <span>Add a task</span>
+        </Button>
+      </div>
     </div>
   );
 }
