@@ -1,15 +1,43 @@
-
 import serverless from 'serverless-http';
 import express from "express";
-import { registerRoutes } from "../../server/routes";
 
 const app = express();
+const router = express.Router();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-// Root route
-app.get("/", (req, res) => {
-  res.json({ message: "Kanban API is running" });
+const isProduction = process.env.NODE_ENV === 'production';
+const basePath = isProduction ? '/.netlify/functions/api' : '/';
+app.use(basePath, router);
+
+// Add logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+
+      console.log(logLine);
+    }
+  });
+
+  next();
 });
 
 // Register routes without creating HTTP server
@@ -20,7 +48,7 @@ async function setupApp() {
   const { z } = await import("zod");
 
   // Column routes
-  app.get("/api/columns", async (req, res) => {
+  router.get("/api/columns", async (req, res) => {
     try {
       const columns = await storage.getColumns();
       res.json(columns);
@@ -29,7 +57,7 @@ async function setupApp() {
     }
   });
 
-  app.post("/api/columns", async (req, res) => {
+  router.post("/api/columns", async (req, res) => {
     try {
       const validatedData = insertColumnSchema.parse(req.body);
       const column = await storage.createColumn(validatedData);
@@ -43,7 +71,7 @@ async function setupApp() {
     }
   });
 
-  app.put("/api/columns/:id", async (req, res) => {
+  router.put("/api/columns/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertColumnSchema.partial().parse(req.body);
@@ -63,7 +91,7 @@ async function setupApp() {
     }
   });
 
-  app.delete("/api/columns/:id", async (req, res) => {
+  router.delete("/api/columns/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const success = await storage.deleteColumn(id);
@@ -79,7 +107,7 @@ async function setupApp() {
   });
 
   // Task routes
-  app.get("/api/tasks", async (req, res) => {
+  router.get("/api/tasks", async (req, res) => {
     try {
       const tasks = await storage.getTasks();
       res.json(tasks);
@@ -88,7 +116,7 @@ async function setupApp() {
     }
   });
 
-  app.get("/api/tasks/column/:columnId", async (req, res) => {
+  router.get("/api/tasks/column/:columnId", async (req, res) => {
     try {
       const columnId = parseInt(req.params.columnId);
       const tasks = await storage.getTasksByColumn(columnId);
@@ -98,7 +126,7 @@ async function setupApp() {
     }
   });
 
-  app.post("/api/tasks", async (req, res) => {
+  router.post("/api/tasks", async (req, res) => {
     try {
       const validatedData = insertTaskSchema.parse(req.body);
       const task = await storage.createTask(validatedData);
@@ -112,7 +140,7 @@ async function setupApp() {
     }
   });
 
-  app.put("/api/tasks/:id", async (req, res) => {
+  router.put("/api/tasks/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertTaskSchema.partial().parse(req.body);
@@ -132,7 +160,7 @@ async function setupApp() {
     }
   });
 
-  app.delete("/api/tasks/:id", async (req, res) => {
+  router.delete("/api/tasks/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const success = await storage.deleteTask(id);
@@ -147,7 +175,7 @@ async function setupApp() {
     }
   });
 
-  app.put("/api/tasks/:id/move", async (req, res) => {
+  router.put("/api/tasks/:id/move", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { columnId, position } = req.body;
@@ -168,7 +196,7 @@ async function setupApp() {
     }
   });
 
-  app.put("/api/columns/:id/move", async (req, res) => {
+  router.put("/api/columns/:id/move", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { position } = req.body;
@@ -190,7 +218,7 @@ async function setupApp() {
   });
 
   // Error handling middleware
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  router.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
@@ -199,4 +227,5 @@ async function setupApp() {
 
 setupApp();
 
+export default app;
 export const handler = serverless(app);
