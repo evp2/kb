@@ -11,7 +11,7 @@ module.exports = {
     '@typescript-eslint/recommended',
     '@typescript-eslint/recommended-requiring-type-checking',
   ],
-  ignorePatterns: ['dist', '.eslintrc.js'],
+  ignorePatterns: ['dist', 'eslint.config.js', 'node_modules', 'package.json'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
