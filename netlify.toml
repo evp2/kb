@@ -1,6 +1,5 @@
 
 [build]
-  publish = "assets"
   publish = "dist"
   command = "npm run build"
 
