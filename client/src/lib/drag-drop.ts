@@ -1,9 +1,9 @@
-import { useDrag, useDrop } from "react-dnd";
-import { Task } from "@shared/schema";
+import { useDrag, useDrop } from 'react-dnd';
+import { Task } from '@shared/schema';
 
 export const ItemTypes = {
-  TASK: "task",
-  COLUMN: "column",
+  TASK: 'task',
+  COLUMN: 'column',
 };
 
 export interface DragItem {
@@ -38,7 +38,11 @@ export function useDragTask(task: Task) {
 
 export function useDropTask(
   columnId: number,
-  onMoveTask: (taskId: number, targetColumnId: number, targetPosition: number) => void
+  onMoveTask: (
+    taskId: number,
+    targetColumnId: number,
+    targetPosition: number
+  ) => void
 ) {
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: ItemTypes.TASK,

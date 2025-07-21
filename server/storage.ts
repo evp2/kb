@@ -1,4 +1,14 @@
-import { columns, tasks, users, type Column, type Task, type User, type InsertColumn, type InsertTask, type InsertUser } from "@shared/schema";
+import {
+  columns,
+  tasks,
+  users,
+  type Column,
+  type Task,
+  type User,
+  type InsertColumn,
+  type InsertTask,
+  type InsertUser,
+} from '@shared/schema';
 
 export interface IStorage {
   // User operations
@@ -9,7 +19,10 @@ export interface IStorage {
   // Column operations
   getColumns(): Promise<Column[]>;
   createColumn(column: InsertColumn): Promise<Column>;
-  updateColumn(id: number, column: Partial<InsertColumn>): Promise<Column | undefined>;
+  updateColumn(
+    id: number,
+    column: Partial<InsertColumn>
+  ): Promise<Column | undefined>;
   deleteColumn(id: number): Promise<boolean>;
 
   // Task operations
@@ -18,8 +31,15 @@ export interface IStorage {
   createTask(task: InsertTask): Promise<Task>;
   updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined>;
   deleteTask(id: number): Promise<boolean>;
-  moveTask(taskId: number, newColumnId: number, newPosition: number): Promise<Task | undefined>;
-  moveColumn(columnId: number, newPosition: number): Promise<Column | undefined>;
+  moveTask(
+    taskId: number,
+    newColumnId: number,
+    newPosition: number
+  ): Promise<Task | undefined>;
+  moveColumn(
+    columnId: number,
+    newPosition: number
+  ): Promise<Column | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -45,12 +65,18 @@ export class MemStorage implements IStorage {
 
   private initializeDefaultColumns() {
     const defaultColumns: Column[] = [
-      { id: 1, title: "To Do", color: "gray", position: 0, showSlider: false },
-      { id: 2, title: "In Progress", color: "blue", position: 1, showSlider: true },
-      { id: 3, title: "Done", color: "green", position: 2, showSlider: false },
+      { id: 1, title: 'To Do', color: 'gray', position: 0, showSlider: false },
+      {
+        id: 2,
+        title: 'In Progress',
+        color: 'blue',
+        position: 1,
+        showSlider: true,
+      },
+      { id: 3, title: 'Done', color: 'green', position: 2, showSlider: false },
     ];
 
-    defaultColumns.forEach(column => {
+    defaultColumns.forEach((column) => {
       this.columns.set(column.id, column);
     });
     this.currentColumnId = 4;
@@ -60,106 +86,107 @@ export class MemStorage implements IStorage {
     const defaultTasks: Task[] = [
       {
         id: 1,
-        title: "Redesign user dashboard",
-        description: "Update the main dashboard layout and improve user experience",
-        priority: "high",
+        title: 'Redesign user dashboard',
+        description:
+          'Update the main dashboard layout and improve user experience',
+        priority: 'high',
         columnId: 1,
         position: 0,
         progress: 0,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
       {
         id: 2,
-        title: "Update API documentation",
-        description: "Review and update all API endpoints documentation",
-        priority: "medium",
+        title: 'Update API documentation',
+        description: 'Review and update all API endpoints documentation',
+        priority: 'medium',
         columnId: 1,
         position: 1,
         progress: 0,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
         id: 3,
-        title: "Setup testing environment",
-        description: "Configure automated testing pipeline for the project",
-        priority: "low",
+        title: 'Setup testing environment',
+        description: 'Configure automated testing pipeline for the project',
+        priority: 'low',
         columnId: 1,
         position: 2,
         progress: 0,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
       },
       {
         id: 4,
-        title: "Implement user authentication",
-        description: "Add JWT authentication and secure login flow",
-        priority: "high",
+        title: 'Implement user authentication',
+        description: 'Add JWT authentication and secure login flow',
+        priority: 'high',
         columnId: 2,
         position: 0,
         progress: 2,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
       },
       {
         id: 5,
-        title: "Database optimization",
-        description: "Optimize database queries and add proper indexing",
-        priority: "medium",
+        title: 'Database optimization',
+        description: 'Optimize database queries and add proper indexing',
+        priority: 'medium',
         columnId: 2,
         position: 1,
         progress: 1,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
         id: 6,
-        title: "Setup project structure",
-        description: "Initialize React project with all necessary dependencies",
-        priority: "low",
+        title: 'Setup project structure',
+        description: 'Initialize React project with all necessary dependencies',
+        priority: 'low',
         columnId: 3,
         position: 0,
         progress: 5,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       },
       {
         id: 7,
-        title: "Design wireframes",
-        description: "Create initial wireframes for the application",
-        priority: "medium",
+        title: 'Design wireframes',
+        description: 'Create initial wireframes for the application',
+        priority: 'medium',
         columnId: 3,
         position: 1,
         progress: 5,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
       {
         id: 8,
-        title: "Setup Git repository",
-        description: "Initialize version control and setup GitHub repository",
-        priority: "low",
+        title: 'Setup Git repository',
+        description: 'Initialize version control and setup GitHub repository',
+        priority: 'low',
         columnId: 3,
         position: 2,
         progress: 5,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
         id: 9,
-        title: "Research drag and drop libraries",
-        description: "Evaluate different drag and drop solutions for React",
-        priority: "medium",
+        title: 'Research drag and drop libraries',
+        description: 'Evaluate different drag and drop solutions for React',
+        priority: 'medium',
         columnId: 3,
         position: 3,
         progress: 4,
-        assignees: "Evan P",
+        assignees: 'Evan P',
         createdAt: new Date(),
       },
     ];
 
-    defaultTasks.forEach(task => {
+    defaultTasks.forEach((task) => {
       this.tasks.set(task.id, task);
     });
     this.currentTaskId = 10;
@@ -171,7 +198,9 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username
+    );
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -183,7 +212,9 @@ export class MemStorage implements IStorage {
 
   // Column operations
   async getColumns(): Promise<Column[]> {
-    return Array.from(this.columns.values()).sort((a, b) => a.position - b.position);
+    return Array.from(this.columns.values()).sort(
+      (a, b) => a.position - b.position
+    );
   }
 
   async createColumn(insertColumn: InsertColumn): Promise<Column> {
@@ -193,7 +224,10 @@ export class MemStorage implements IStorage {
     return column;
   }
 
-  async updateColumn(id: number, updates: Partial<InsertColumn>): Promise<Column | undefined> {
+  async updateColumn(
+    id: number,
+    updates: Partial<InsertColumn>
+  ): Promise<Column | undefined> {
     const column = this.columns.get(id);
     if (!column) return undefined;
 
@@ -204,11 +238,15 @@ export class MemStorage implements IStorage {
 
   async deleteColumn(id: number): Promise<boolean> {
     // Move all tasks from this column to the first column
-    const tasksToMove = Array.from(this.tasks.values()).filter(task => task.columnId === id);
-    const firstColumn = Array.from(this.columns.values()).find(col => col.id !== id);
+    const tasksToMove = Array.from(this.tasks.values()).filter(
+      (task) => task.columnId === id
+    );
+    const firstColumn = Array.from(this.columns.values()).find(
+      (col) => col.id !== id
+    );
 
     if (firstColumn) {
-      tasksToMove.forEach(task => {
+      tasksToMove.forEach((task) => {
         this.tasks.set(task.id, { ...task, columnId: firstColumn.id });
       });
     }
@@ -218,12 +256,14 @@ export class MemStorage implements IStorage {
 
   // Task operations
   async getTasks(): Promise<Task[]> {
-    return Array.from(this.tasks.values()).sort((a, b) => a.position - b.position);
+    return Array.from(this.tasks.values()).sort(
+      (a, b) => a.position - b.position
+    );
   }
 
   async getTasksByColumn(columnId: number): Promise<Task[]> {
     return Array.from(this.tasks.values())
-      .filter(task => task.columnId === columnId)
+      .filter((task) => task.columnId === columnId)
       .sort((a, b) => a.position - b.position);
   }
 
@@ -232,13 +272,16 @@ export class MemStorage implements IStorage {
     const task: Task = {
       ...insertTask,
       id,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     this.tasks.set(id, task);
     return task;
   }
 
-  async updateTask(id: number, updates: Partial<InsertTask>): Promise<Task | undefined> {
+  async updateTask(
+    id: number,
+    updates: Partial<InsertTask>
+  ): Promise<Task | undefined> {
     const task = this.tasks.get(id);
     if (!task) return undefined;
 
@@ -251,24 +294,37 @@ export class MemStorage implements IStorage {
     return this.tasks.delete(id);
   }
 
-  async moveTask(taskId: number, newColumnId: number, newPosition: number): Promise<Task | undefined> {
+  async moveTask(
+    taskId: number,
+    newColumnId: number,
+    newPosition: number
+  ): Promise<Task | undefined> {
     const task = this.tasks.get(taskId);
     if (!task) return undefined;
 
-    const updatedTask = { ...task, columnId: newColumnId, position: newPosition };
+    const updatedTask = {
+      ...task,
+      columnId: newColumnId,
+      position: newPosition,
+    };
     this.tasks.set(taskId, updatedTask);
     return updatedTask;
   }
 
-  async moveColumn(columnId: number, newPosition: number): Promise<Column | undefined> {
+  async moveColumn(
+    columnId: number,
+    newPosition: number
+  ): Promise<Column | undefined> {
     const column = this.columns.get(columnId);
     if (!column) return undefined;
 
-    const allColumns = Array.from(this.columns.values()).sort((a, b) => a.position - b.position);
+    const allColumns = Array.from(this.columns.values()).sort(
+      (a, b) => a.position - b.position
+    );
     const oldPosition = column.position;
 
     // Update positions of other columns
-    allColumns.forEach(col => {
+    allColumns.forEach((col) => {
       if (col.id === columnId) {
         // Update the moved column
         this.columns.set(col.id, { ...col, position: newPosition });

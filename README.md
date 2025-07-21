@@ -7,6 +7,7 @@ This is a full-stack Kanban board application built with React, Express, and Typ
 The application follows a modern full-stack architecture with clear separation between frontend and backend concerns:
 
 ### Frontend Architecture
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite for fast development and optimized builds
 - **UI Framework**: shadcn/ui components built on Radix UI primitives
@@ -16,6 +17,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Drag & Drop**: React DnD for kanban board interactions
 
 ### Backend Architecture
+
 - **Runtime**: Node.js with Express.js
 - **Language**: TypeScript with ES modules
 - **Database ORM**: Drizzle ORM configured for PostgreSQL
@@ -26,16 +28,19 @@ The application follows a modern full-stack architecture with clear separation b
 ## Key Components
 
 ### Database Schema
+
 - **columns**: Stores kanban columns with title, color, and position
 - **tasks**: Stores individual tasks with title, description, priority, column assignment, and position
 - **users**: User authentication data (username/password)
 
 ### API Endpoints
+
 - **Columns API**: CRUD operations for kanban columns (`/api/columns`)
 - **Tasks API**: CRUD operations for tasks including move functionality (`/api/tasks`)
 - **User API**: Authentication and user management (referenced but not fully implemented)
 
 ### Frontend Components
+
 - **KanbanBoard**: Main drag-and-drop interface
 - **KanbanColumn**: Individual column containers
 - **TaskCard**: Draggable task items
@@ -53,11 +58,13 @@ The application follows a modern full-stack architecture with clear separation b
 ## External Dependencies
 
 ### Database
+
 - **Neon Database**: Serverless PostgreSQL database
 - **Connection**: Uses `@neondatabase/serverless` driver
 - **Migrations**: Drizzle Kit manages schema migrations
 
 ### UI Libraries
+
 - **Radix UI**: Headless component primitives for accessibility
 - **Lucide React**: Icon library
 - **React Hook Form**: Form state management with Zod validation
@@ -65,6 +72,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Date-fns**: Date formatting utilities
 
 ### Development Tools
+
 - **ESBuild**: Server-side bundling for production
 - **TSX**: Development server for TypeScript execution
 - **Replit Integration**: Custom plugins for Replit environment
@@ -72,11 +80,13 @@ The application follows a modern full-stack architecture with clear separation b
 ## Deployment Strategy
 
 ### Development Mode
+
 - **Frontend**: Vite dev server with HMR (Hot Module Replacement)
 - **Backend**: TSX for direct TypeScript execution
 - **Database**: Connects to Neon Database via environment variable
 
 ### Production Build
+
 - **Frontend**: Vite builds static assets to `dist/public`
 - **Backend**: ESBuild bundles server code to `dist/index.js`
 - **Deployment**: Single Node.js process serves both API and static files

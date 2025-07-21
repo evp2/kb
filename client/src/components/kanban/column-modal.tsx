@@ -1,16 +1,16 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertColumnSchema } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { insertColumnSchema } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -19,22 +19,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
 const columnFormSchema = insertColumnSchema.extend({
-  title: z.string().min(1, "Title is required").max(50, "Title must be less than 50 characters"),
-  color: z.enum(["red", "blue", "green", "yellow", "purple", "gray"]).default("blue"),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(50, 'Title must be less than 50 characters'),
+  color: z
+    .enum(['red', 'blue', 'green', 'yellow', 'purple', 'gray'])
+    .default('blue'),
   position: z.number().default(0),
   showSlider: z.number().min(0).max(1).default(1), // Added showSlider field
 });
@@ -47,12 +52,12 @@ interface ColumnModalProps {
 }
 
 const colorOptions = [
-  { value: "red", color: "bg-red-500" },
-  { value: "blue", color: "bg-blue-500" },
-  { value: "green", color: "bg-green-500" },
-  { value: "yellow", color: "bg-yellow-500" },
-  { value: "purple", color: "bg-purple-500" },
-  { value: "gray", color: "bg-gray-500" },
+  { value: 'red', color: 'bg-red-500' },
+  { value: 'blue', color: 'bg-blue-500' },
+  { value: 'green', color: 'bg-green-500' },
+  { value: 'yellow', color: 'bg-yellow-500' },
+  { value: 'purple', color: 'bg-purple-500' },
+  { value: 'gray', color: 'bg-gray-500' },
 ];
 
 export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
@@ -62,8 +67,8 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
   const form = useForm<ColumnFormValues>({
     resolver: zodResolver(columnFormSchema),
     defaultValues: {
-      title: "",
-      color: "blue",
+      title: '',
+      color: 'blue',
       position: 0,
       showSlider: 1, // Added showSlider default value
     },
@@ -71,22 +76,22 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
 
   const createColumnMutation = useMutation({
     mutationFn: async (data: ColumnFormValues) => {
-      const response = await apiRequest("POST", "/api/columns", data);
+      const response = await apiRequest('POST', '/api/columns', data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/columns"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/columns'] });
       toast({
-        title: "Column created successfully",
-        description: "Your new column has been added to the board.",
+        title: 'Column created successfully',
+        description: 'Your new column has been added to the board.',
       });
       onClose();
     },
     onError: (error) => {
       toast({
-        title: "Error creating column",
+        title: 'Error creating column',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -116,10 +121,7 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                 <FormItem>
                   <FormLabel>Column Title</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter column title..."
-                      {...field}
-                    />
+                    <Input placeholder="Enter column title..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,11 +142,11 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                           type="button"
                           onClick={() => field.onChange(option.value)}
                           className={cn(
-                            "w-8 h-8 rounded-full border-2 transition-all",
+                            'w-8 h-8 rounded-full border-2 transition-all',
                             option.color,
                             field.value === option.value
-                              ? "border-gray-800 scale-110"
-                              : "border-transparent hover:border-gray-400"
+                              ? 'border-gray-800 scale-110'
+                              : 'border-transparent hover:border-gray-400'
                           )}
                         />
                       ))}
@@ -169,7 +171,9 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                   <FormControl>
                     <Switch
                       checked={field.value === 1}
-                      onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked ? 1 : 0)
+                      }
                     />
                   </FormControl>
                 </FormItem>

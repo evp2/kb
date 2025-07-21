@@ -1,6 +1,5 @@
-
-import { useDropColumn } from "@/lib/drag-drop";
-import { cn } from "@/lib/utils";
+import { useDropColumn } from '@/lib/drag-drop';
+import { cn } from '@/lib/utils';
 
 interface ColumnDropZoneProps {
   position: number;
@@ -19,8 +18,10 @@ export default function ColumnDropZone({
     <div
       ref={drop}
       className={cn(
-        "relative",
-        isOver && canDrop && "before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500 before:rounded-full before:z-10"
+        'relative',
+        isOver &&
+          canDrop &&
+          'before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500 before:rounded-full before:z-10'
       )}
     >
       {children}

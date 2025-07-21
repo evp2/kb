@@ -1,11 +1,11 @@
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Column, Task } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import KanbanColumn from "./kanban-column";
-import ColumnDropZone from "./column-drop-zone";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Column, Task } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import KanbanColumn from './kanban-column';
+import ColumnDropZone from './column-drop-zone';
 
 interface KanbanBoardProps {
   columns: Column[];
@@ -26,54 +26,80 @@ export default function KanbanBoard({
   const { toast } = useToast();
 
   const moveTaskMutation = useMutation({
-    mutationFn: async ({ taskId, columnId, position }: { taskId: number; columnId: number; position: number }) => {
-      const response = await apiRequest("PUT", `/api/tasks/${taskId}/move`, {
+    mutationFn: async ({
+      taskId,
+      columnId,
+      position,
+    }: {
+      taskId: number;
+      columnId: number;
+      position: number;
+    }) => {
+      const response = await apiRequest('PUT', `/api/tasks/${taskId}/move`, {
         columnId,
         position,
       });
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       toast({
-        title: "Task moved successfully",
-        description: "The task has been moved to the new column.",
+        title: 'Task moved successfully',
+        description: 'The task has been moved to the new column.',
       });
     },
     onError: (error) => {
       toast({
-        title: "Error moving task",
+        title: 'Error moving task',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
   const moveColumnMutation = useMutation({
-    mutationFn: async ({ columnId, position }: { columnId: number; position: number }) => {
-      const response = await apiRequest("PUT", `/api/columns/${columnId}/move`, {
-        position,
-      });
+    mutationFn: async ({
+      columnId,
+      position,
+    }: {
+      columnId: number;
+      position: number;
+    }) => {
+      const response = await apiRequest(
+        'PUT',
+        `/api/columns/${columnId}/move`,
+        {
+          position,
+        }
+      );
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/columns"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/columns'] });
       toast({
-        title: "Column moved successfully",
-        description: "The column has been reordered.",
+        title: 'Column moved successfully',
+        description: 'The column has been reordered.',
       });
     },
     onError: (error) => {
       toast({
-        title: "Error moving column",
+        title: 'Error moving column',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
-  const handleMoveTask = (taskId: number, targetColumnId: number, targetPosition: number) => {
-    moveTaskMutation.mutate({ taskId, columnId: targetColumnId, position: targetPosition });
+  const handleMoveTask = (
+    taskId: number,
+    targetColumnId: number,
+    targetPosition: number
+  ) => {
+    moveTaskMutation.mutate({
+      taskId,
+      columnId: targetColumnId,
+      position: targetPosition,
+    });
   };
 
   const handleMoveColumn = (columnId: number, targetPosition: number) => {
@@ -82,7 +108,7 @@ export default function KanbanBoard({
 
   const getTasksForColumn = (columnId: number) => {
     return tasks
-      .filter(task => task.columnId === columnId)
+      .filter((task) => task.columnId === columnId)
       .sort((a, b) => a.position - b.position);
   };
 
