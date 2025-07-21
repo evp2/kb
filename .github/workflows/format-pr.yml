@@ -1,4 +1,4 @@
-name: Lint and Format
+name: Format PR
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main, develop]
 
 jobs:
-  lint-and-format:
+  format-pr:
     runs-on: ubuntu-latest
 
     steps:
