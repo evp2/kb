@@ -47,6 +47,10 @@ async function setupApp() {
   const { insertColumnSchema, insertTaskSchema } = await import("@shared/schema");
   const { z } = await import("zod");
 
+  router.get("/", (req, res) => {
+    res.sendFile("index.html", { root: "public" });
+  });
+
   // Column routes
   router.get("/api/columns", async (req, res) => {
     try {
