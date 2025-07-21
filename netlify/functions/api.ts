@@ -48,7 +48,7 @@ async function setupApp() {
   const { z } = await import("zod");
 
   router.get('/', (req, res) => {
-    res.sendFile("index.html", { root: basePath });
+    res.sendFile("index.html", { root: path.join(basePath, 'public') });
   });
   // Column routes
   router.get("/api/columns", async (req, res) => {
