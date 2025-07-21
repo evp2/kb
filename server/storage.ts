@@ -45,9 +45,9 @@ export class MemStorage implements IStorage {
 
   private initializeDefaultColumns() {
     const defaultColumns: Column[] = [
-      { id: 1, title: "To Do", color: "gray", position: 0 },
-      { id: 2, title: "In Progress", color: "blue", position: 1 },
-      { id: 3, title: "Done", color: "green", position: 2 },
+      { id: 1, title: "To Do", color: "gray", position: 0, showSlider: false },
+      { id: 2, title: "In Progress", color: "blue", position: 1, showSlider: true },
+      { id: 3, title: "Done", color: "green", position: 2, showSlider: false },
     ];
 
     defaultColumns.forEach(column => {
