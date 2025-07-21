@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { Task, Column, insertTaskSchema, insertCommentSchema, Comment } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import {
+  Task,
+  Column,
+  insertTaskSchema,
+  insertCommentSchema,
+  Comment,
+} from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -19,33 +25,39 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const taskFormSchema = insertTaskSchema.extend({
-  title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
   description: z.string().optional(),
-  priority: z.enum(["low", "medium", "high"]).default("medium"),
-  columnId: z.number().min(1, "Column is required"),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+  columnId: z.number().min(1, 'Column is required'),
   position: z.number().default(0),
   progress: z.number().min(0).max(5).default(0),
   assignees: z.string().optional(),
 });
 
 const commentFormSchema = insertCommentSchema.extend({
-  content: z.string().min(1, "Comment cannot be empty").max(500, "Comment must be less than 500 characters"),
-  author: z.string().min(1, "Author is required"),
+  content: z
+    .string()
+    .min(1, 'Comment cannot be empty')
+    .max(500, 'Comment must be less than 500 characters'),
+  author: z.string().min(1, 'Author is required'),
 });
 
 type TaskFormValues = z.infer<typeof taskFormSchema>;
@@ -69,35 +81,35 @@ export default function TaskModal({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const isEditing = !!task;
-  const [activeTab, setActiveTab] = useState("details");
+  const [activeTab, setActiveTab] = useState('details');
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      priority: "medium",
+      title: '',
+      description: '',
+      priority: 'medium',
       columnId: selectedColumnId || columns[0]?.id || 1,
       position: 0,
       progress: 0,
-      assignees: "",
+      assignees: '',
     },
   });
 
   const commentForm = useForm<CommentFormValues>({
     resolver: zodResolver(commentFormSchema),
     defaultValues: {
-      content: "",
-      author: "",
+      content: '',
+      author: '',
     },
   });
 
   // Fetch comments for the task
   const { data: comments = [] } = useQuery<Comment[]>({
-    queryKey: ["/api/comments", task?.id],
+    queryKey: ['/api/comments', task?.id],
     queryFn: async () => {
       if (!task?.id) return [];
-      const response = await apiRequest("GET", `/api/comments/${task.id}`);
+      const response = await apiRequest('GET', `/api/comments/${task.id}`);
       return response.json();
     },
     enabled: !!task?.id,
@@ -108,92 +120,92 @@ export default function TaskModal({
     if (task) {
       form.reset({
         title: task.title,
-        description: task.description || "",
-        priority: task.priority as "low" | "medium" | "high",
+        description: task.description || '',
+        priority: task.priority as 'low' | 'medium' | 'high',
         columnId: task.columnId,
         position: task.position,
         progress: task.progress || 0,
-        assignees: task.assignees || ""
+        assignees: task.assignees || '',
       });
     } else if (selectedColumnId || !isEditing) {
       form.reset({
-        title: "",
-        description: "",
-        priority: "medium",
+        title: '',
+        description: '',
+        priority: 'medium',
         columnId: selectedColumnId,
         position: 0,
         progress: 0,
-        assignees: "",
+        assignees: '',
       });
     }
   }, [task, selectedColumnId, form]);
 
   const createTaskMutation = useMutation({
     mutationFn: async (data: TaskFormValues) => {
-      const response = await apiRequest("POST", "/api/tasks", data);
+      const response = await apiRequest('POST', '/api/tasks', data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       toast({
-        title: "Task created successfully",
-        description: "Your new task has been added to the board.",
+        title: 'Task created successfully',
+        description: 'Your new task has been added to the board.',
       });
       onClose();
     },
     onError: (error) => {
       toast({
-        title: "Error creating task",
+        title: 'Error creating task',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
   const updateTaskMutation = useMutation({
     mutationFn: async (data: TaskFormValues) => {
-      const response = await apiRequest("PUT", `/api/tasks/${task!.id}`, data);
+      const response = await apiRequest('PUT', `/api/tasks/${task!.id}`, data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       toast({
-        title: "Task updated successfully",
-        description: "Your task has been updated.",
+        title: 'Task updated successfully',
+        description: 'Your task has been updated.',
       });
       onClose();
     },
     onError: (error) => {
       toast({
-        title: "Error updating task",
+        title: 'Error updating task',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
   const createCommentMutation = useMutation({
     mutationFn: async (data: CommentFormValues) => {
-      if (!task?.id) throw new Error("Task ID is required");
-      const response = await apiRequest("POST", "/api/comments", {
+      if (!task?.id) throw new Error('Task ID is required');
+      const response = await apiRequest('POST', '/api/comments', {
         ...data,
         taskId: task.id,
       });
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/comments", task?.id] });
+      queryClient.invalidateQueries({ queryKey: ['/api/comments', task?.id] });
       commentForm.reset();
       toast({
-        title: "Comment added successfully",
-        description: "Your comment has been added to the task.",
+        title: 'Comment added successfully',
+        description: 'Your comment has been added to the task.',
       });
     },
     onError: (error) => {
       toast({
-        title: "Error adding comment",
+        title: 'Error adding comment',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -213,7 +225,7 @@ export default function TaskModal({
   const handleClose = () => {
     form.reset();
     commentForm.reset();
-    setActiveTab("details");
+    setActiveTab('details');
     onClose();
   };
 
@@ -222,20 +234,31 @@ export default function TaskModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Task" : "Create New Task"}
+            {isEditing ? 'Edit Task' : 'Create New Task'}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Task Details</TabsTrigger>
-            <TabsTrigger value="comments" 
-              className={isEditing ? "" : "disabled disabled:pointer-events-none disabled:opacity-50"}>Comments ({comments.length})</TabsTrigger>
+            <TabsTrigger
+              value="comments"
+              className={
+                isEditing
+                  ? ''
+                  : 'disabled disabled:pointer-events-none disabled:opacity-50'
+              }
+            >
+              Comments ({comments.length})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="details" className="space-y-4">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="title"
@@ -243,10 +266,7 @@ export default function TaskModal({
                     <FormItem>
                       <FormLabel>Task Title</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter task title..."
-                          {...field}
-                        />
+                        <Input placeholder="Enter task title..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -278,7 +298,10 @@ export default function TaskModal({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Priority</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select priority" />
@@ -286,7 +309,9 @@ export default function TaskModal({
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="low">Low Priority</SelectItem>
-                          <SelectItem value="medium">Medium Priority</SelectItem>
+                          <SelectItem value="medium">
+                            Medium Priority
+                          </SelectItem>
                           <SelectItem value="high">High Priority</SelectItem>
                         </SelectContent>
                       </Select>
@@ -301,7 +326,12 @@ export default function TaskModal({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Column</FormLabel>
-                      <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
+                      <Select
+                        onValueChange={(value) =>
+                          field.onChange(parseInt(value))
+                        }
+                        value={field.value?.toString()}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select column" />
@@ -309,7 +339,10 @@ export default function TaskModal({
                         </FormControl>
                         <SelectContent>
                           {columns.map((column) => (
-                            <SelectItem key={column.id} value={column.id.toString()}>
+                            <SelectItem
+                              key={column.id}
+                              value={column.id.toString()}
+                            >
                               {column.title}
                             </SelectItem>
                           ))}
@@ -360,10 +393,13 @@ export default function TaskModal({
                 <div className="flex space-x-3 pt-4">
                   <Button
                     type="submit"
-                    disabled={createTaskMutation.isPending || updateTaskMutation.isPending}
+                    disabled={
+                      createTaskMutation.isPending ||
+                      updateTaskMutation.isPending
+                    }
                     className="flex-1"
                   >
-                    {isEditing ? "Update Task" : "Create Task"}
+                    {isEditing ? 'Update Task' : 'Create Task'}
                   </Button>
                   <Button
                     type="button"
@@ -381,12 +417,15 @@ export default function TaskModal({
           <TabsContent value="comments" className="space-y-4">
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900">Comments</h3>
-              
+
               {task ? (
                 <>
                   {/* Add Comment Form */}
                   <Form {...commentForm}>
-                    <form onSubmit={commentForm.handleSubmit(onCommentSubmit)} className="space-y-3">
+                    <form
+                      onSubmit={commentForm.handleSubmit(onCommentSubmit)}
+                      className="space-y-3"
+                    >
                       <FormField
                         control={commentForm.control}
                         name="author"
@@ -403,7 +442,7 @@ export default function TaskModal({
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={commentForm.control}
                         name="content"
@@ -422,7 +461,7 @@ export default function TaskModal({
                           </FormItem>
                         )}
                       />
-                      
+
                       <Button
                         type="submit"
                         disabled={createCommentMutation.isPending}
@@ -437,16 +476,27 @@ export default function TaskModal({
                   <div className="space-y-3">
                     {comments.length > 0 ? (
                       comments.map((comment) => (
-                        <div key={comment.id} className="border border-gray-200 rounded-lg p-3">
+                        <div
+                          key={comment.id}
+                          className="border border-gray-200 rounded-lg p-3"
+                        >
                           <div className="flex items-start space-x-3">
                             <div className="flex-1">
                               <div className="flex items-center space-x-2 mb-1">
-                                <span className="text-sm font-medium text-gray-900">{comment.author}</span>
+                                <span className="text-sm font-medium text-gray-900">
+                                  {comment.author}
+                                </span>
                                 <span className="text-xs text-gray-500">
-                                  {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : "Unknown"}
+                                  {comment.createdAt
+                                    ? new Date(
+                                        comment.createdAt
+                                      ).toLocaleString()
+                                    : 'Unknown'}
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-700">{comment.content}</p>
+                              <p className="text-sm text-gray-700">
+                                {comment.content}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -457,7 +507,9 @@ export default function TaskModal({
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-gray-500">Create the task first to add comments.</p>
+                <p className="text-sm text-gray-500">
+                  Create the task first to add comments.
+                </p>
               )}
             </div>
           </TabsContent>

@@ -1,4 +1,4 @@
-import { Plus, Columns } from "lucide-react";
+import { Plus, Columns } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -9,16 +9,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 interface KanbanSidebarProps {
   onAddTask: () => void;
   onAddColumn: () => void;
 }
 
-export default function KanbanSidebar({ onAddTask, onAddColumn }: KanbanSidebarProps) {
+export default function KanbanSidebar({
+  onAddTask,
+  onAddColumn,
+}: KanbanSidebarProps) {
   return (
     <Sidebar className="bg-white border-r border-gray-200">
       <SidebarContent className="bg-white">
