@@ -42,6 +42,7 @@ export default function KanbanColumn({
       blue: 'bg-blue-500',
       green: 'bg-green-500',
       red: 'bg-red-500',
+      orange: 'bg-orange-500',
       yellow: 'bg-yellow-500',
       purple: 'bg-purple-500',
     };
@@ -54,6 +55,7 @@ export default function KanbanColumn({
       blue: 'bg-blue-100 text-blue-600',
       green: 'bg-green-100 text-green-600',
       red: 'bg-red-100 text-red-600',
+      orange: 'bg-orange-100 text-orange-600',
       yellow: 'bg-yellow-100 text-yellow-600',
       purple: 'bg-purple-100 text-purple-600',
     };
