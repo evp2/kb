@@ -23,7 +23,7 @@ export default function KanbanSidebar({
   onAddColumn,
 }: KanbanSidebarProps) {
   return (
-    <Sidebar className="bg-white border-r border-gray-200">
+    <Sidebar className="bg-white border-r border-gray-200 z-30">
       <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Actions</SidebarGroupLabel>

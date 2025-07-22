@@ -98,7 +98,7 @@ export default function KanbanPage() {
 
         <SidebarInset className="flex-1">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-1000">
+          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
             <div className="max-w-full px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -133,7 +133,7 @@ export default function KanbanPage() {
           </header>
 
           {/* Main Content */}
-          <main className="p-6 z-1000">
+          <main className="p-6 z-10">
             <KanbanBoard
               columns={columns}
               tasks={filteredTasks}
