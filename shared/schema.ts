@@ -16,7 +16,7 @@ export const columns = pgTable('columns', {
   title: text('title').notNull(),
   color: text('color').notNull().default('blue'),
   position: integer('position').notNull(),
-  showSlider: boolean('show_slider').notNull().default(false),
+  showSlider: integer('show_slider').notNull(),
 });
 
 export const tasks = pgTable('tasks', {
