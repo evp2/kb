@@ -70,7 +70,7 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
       title: '',
       color: 'blue',
       position: 0,
-      showSlider: 1, // Added showSlider default value
+      showSlider: false, // Added showSlider default value
     },
   });
 
@@ -170,7 +170,7 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value === 1}
+                      checked={field.value === true}
                       onCheckedChange={(checked) =>
                         field.onChange(checked ? 1 : 0)
                       }
