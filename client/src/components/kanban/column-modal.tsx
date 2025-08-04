@@ -49,6 +49,7 @@ type ColumnFormValues = z.infer<typeof columnFormSchema>;
 interface ColumnModalProps {
   isOpen: boolean;
   onClose: () => void;
+  columns?: Array<{ position: number }>; // Added columns prop to get current positions
 }
 
 const colorOptions = [
@@ -60,17 +61,20 @@ const colorOptions = [
   { value: 'gray', color: 'bg-gray-500' },
 ];
 
-export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
+export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Calculate the next position (at the end)
+  const nextPosition = columns.length > 0 ? Math.max(...columns.map(col => col.position)) + 1 : 0;
 
   const form = useForm<ColumnFormValues>({
     resolver: zodResolver(columnFormSchema),
     defaultValues: {
       title: '',
       color: 'blue',
-      position: 0,
-      showSlider: 1, // Added showSlider default value
+      position: nextPosition,
+      showSlider: 1, // Fixed showSlider default value
     },
   });
 
