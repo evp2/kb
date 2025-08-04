@@ -41,7 +41,7 @@ const columnFormSchema = insertColumnSchema.extend({
     .enum(['red', 'blue', 'green', 'yellow', 'purple', 'gray'])
     .default('blue'),
   position: z.number().default(0),
-  showSlider: z.number().min(0).max(1).default(1), // Added showSlider field
+  showSlider: z.boolean().default(true), // Fixed showSlider field type
 });
 
 type ColumnFormValues = z.infer<typeof columnFormSchema>;
@@ -74,7 +74,7 @@ export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnMod
       title: '',
       color: 'blue',
       position: nextPosition,
-      showSlider: 1, // Fixed showSlider default value
+      showSlider: true, // Fixed showSlider default value
     },
   });
 
@@ -174,10 +174,8 @@ export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnMod
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value === 1}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked ? 1 : 0)
-                      }
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
                 </FormItem>
