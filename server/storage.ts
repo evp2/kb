@@ -226,7 +226,12 @@ export class MemStorage implements IStorage {
 
   async createColumn(insertColumn: InsertColumn): Promise<Column> {
     const id = this.currentColumnId++;
-    const column: Column = { ...insertColumn, id };
+    const column: Column = {
+      ...insertColumn,
+      id,
+      position: this.columns.size,
+      color: insertColumn.color || 'default',
+    };
     this.columns.set(id, column);
     return column;
   }
@@ -244,21 +249,33 @@ export class MemStorage implements IStorage {
   }
 
   async deleteColumn(id: number): Promise<boolean> {
-    // Move all tasks from this column to the first column
-    const tasksToMove = Array.from(this.tasks.values()).filter(
+    const column = this.columns.get(id);
+    if (!column) return false;
+
+    // Move all tasks from this column to the first available column
+    const tasks = Array.from(this.tasks.values()).filter(
       (task) => task.columnId === id
     );
-    const firstColumn = Array.from(this.columns.values()).find(
+    const remainingColumns = Array.from(this.columns.values()).filter(
       (col) => col.id !== id
     );
 
-    if (firstColumn) {
-      tasksToMove.forEach((task) => {
-        this.tasks.set(task.id, { ...task, columnId: firstColumn.id });
+    if (remainingColumns.length > 0) {
+      const targetColumnId = remainingColumns[0].id;
+      tasks.forEach((task) => {
+        task.columnId = targetColumnId;
       });
     }
 
-    return this.columns.delete(id);
+    this.columns.delete(id);
+
+    // Reorder remaining columns positions to be sequential
+    const allColumns = await this.getColumns();
+    allColumns.forEach((col, index) => {
+      col.position = index;
+    });
+
+    return true;
   }
 
   // Task operations
@@ -280,6 +297,8 @@ export class MemStorage implements IStorage {
       ...insertTask,
       id,
       createdAt: new Date(),
+      priority: insertTask.priority || 'medium',
+      progress: insertTask.progress ?? 0,
     };
     this.tasks.set(id, task);
     return task;
@@ -318,37 +337,31 @@ export class MemStorage implements IStorage {
     return updatedTask;
   }
 
-  async moveColumn(
-    columnId: number,
-    newPosition: number
-  ): Promise<Column | undefined> {
-    const column = this.columns.get(columnId);
+  async moveColumn(id: number, newPosition: number): Promise<Column | undefined> {
+    const column = this.columns.get(id);
     if (!column) return undefined;
 
-    const allColumns = Array.from(this.columns.values()).sort(
-      (a, b) => a.position - b.position
-    );
+    const allColumns = await this.getColumns();
     const oldPosition = column.position;
 
     // Update positions of other columns
     allColumns.forEach((col) => {
-      if (col.id === columnId) {
-        // Update the moved column
-        this.columns.set(col.id, { ...col, position: newPosition });
-      } else if (newPosition < oldPosition) {
-        // Moving left: shift columns right
-        if (col.position >= newPosition && col.position < oldPosition) {
-          this.columns.set(col.id, { ...col, position: col.position + 1 });
-        }
-      } else {
-        // Moving right: shift columns left
+      if (col.id === id) {
+        col.position = newPosition;
+      } else if (oldPosition < newPosition) {
+        // Moving right: shift left the columns between old and new position
         if (col.position > oldPosition && col.position <= newPosition) {
-          this.columns.set(col.id, { ...col, position: col.position - 1 });
+          col.position--;
+        }
+      } else if (oldPosition > newPosition) {
+        // Moving left: shift right the columns between new and old position
+        if (col.position >= newPosition && col.position < oldPosition) {
+          col.position++;
         }
       }
     });
 
-    return this.columns.get(columnId);
+    return column;
   }
 }
 
