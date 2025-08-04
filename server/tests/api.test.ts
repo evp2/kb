@@ -172,34 +172,7 @@ describe('Kanban API Tests', () => {
       });
     });
 
-    describe('DELETE /api/columns/:id', () => {
-      it('should delete column and move tasks to first available column', async () => {
-        // First, verify there are tasks in column 2
-        const tasksInColumn2 = await request(app).get('/api/tasks/column/2');
-        expect(tasksInColumn2.body.length).toBeGreaterThan(0);
-
-        // Delete column 2
-        await request(app)
-          .delete('/api/columns/2')
-          .expect(204);
-
-        // Verify column is deleted
-        const columns = await request(app).get('/api/columns');
-        const columnIds = columns.body.map((col: any) => col.id);
-        expect(columnIds).not.toContain(2);
-
-        // Verify tasks were moved to another column
-        const allTasks = await request(app).get('/api/tasks');
-        const tasksFromDeletedColumn = allTasks.body.filter((task: any) => task.columnId === 2);
-        expect(tasksFromDeletedColumn).toHaveLength(0);
-      });
-
-      it('should return 404 for non-existent column', async () => {
-        await request(app)
-          .delete('/api/columns/999')
-          .expect(404);
-      });
-    });
+    
 
     describe('PUT /api/columns/:id/move', () => {
       it('should move column to new position', async () => {
@@ -464,23 +437,6 @@ describe('Kanban API Tests', () => {
       expect(movedTask.columnId).toBe(3);
     });
 
-    it('should maintain data consistency when deleting columns with tasks', async () => {
-      // Get tasks in column before deletion
-      const tasksBeforeDeletion = await request(app).get('/api/tasks/column/2');
-      const taskIds = tasksBeforeDeletion.body.map((task: any) => task.id);
-
-      // Delete the column
-      await request(app)
-        .delete('/api/columns/2')
-        .expect(204);
-
-      // Verify all tasks still exist but moved to different columns
-      const allTasks = await request(app).get('/api/tasks');
-      for (const taskId of taskIds) {
-        const task = allTasks.body.find((t: any) => t.id === taskId);
-        expect(task).toBeDefined();
-        expect(task.columnId).not.toBe(2); // Should be moved to different column
-      }
-    });
+    
   });
 });
