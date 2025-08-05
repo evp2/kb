@@ -75,7 +75,7 @@ The application follows a modern full-stack architecture with clear separation b
 
 - **ESBuild**: Server-side bundling for production
 - **TSX**: Development server for TypeScript execution
-- **GitHub Actions Integration**: Custom style guide for GitHub contributions
+- **GitHub Integration**: Custom CI actions for GitHub contributions and deployment previews for Pull requests
 
 ## Deployment Strategy
 
