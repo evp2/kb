@@ -18,6 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/columns', async (req, res) => {
     try {
       const validatedData = insertColumnSchema.parse(req.body);
+      console.log('Column Data:', validatedData);
       const column = await storage.createColumn(validatedData);
       res.status(201).json(column);
     } catch (error) {
