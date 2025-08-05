@@ -36,7 +36,7 @@ The application follows a modern full-stack architecture with clear separation b
 ### API Endpoints
 
 - **Columns API**: CRUD operations for kanban columns (`/api/columns`)
-- **Tasks API**: CRUD operations for tasks including import and move functionality (`/api/tasks`)
+- **Tasks API**: CRUD operations for tasks including move functionality (`/api/tasks`)
 - **User API**: Authentication and user management (referenced but not fully implemented)
 
 ### Frontend Components
@@ -75,6 +75,7 @@ The application follows a modern full-stack architecture with clear separation b
 
 - **ESBuild**: Server-side bundling for production
 - **TSX**: Development server for TypeScript execution
+- **Replit Integration**: Custom plugins for Replit environment
 
 ## Deployment Strategy
 
