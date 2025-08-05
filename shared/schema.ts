@@ -11,6 +11,8 @@ import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 export const assigneesEnum = z.enum(['Evan P']);
+export const colorEnum = z.enum(['gray', 'blue', 'green', 'red', 'orange', 'yellow', 'purple']);
+export const priorityEnum = z.enum(['low', 'medium', 'high']);
 
 export const columns = pgTable('columns', {
   id: serial('id').primaryKey(),
@@ -42,11 +44,15 @@ export const comments = pgTable('comments', {
 
 export const insertColumnSchema = createInsertSchema(columns).omit({
   id: true,
+}).extend({
+  color: colorEnum.optional(),
 });
 
 export const insertTaskSchema = createInsertSchema(tasks).omit({
   id: true,
   createdAt: true,
+}).extend({
+  priority: priorityEnum.optional(),
 });
 
 export const insertCommentSchema = createInsertSchema(comments).omit({

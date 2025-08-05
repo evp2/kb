@@ -158,6 +158,7 @@ export default function KanbanPage() {
       <ColumnModal
         isOpen={isColumnModalOpen}
         onClose={() => setIsColumnModalOpen(false)}
+        columns={columns}
       />
 
       <DeleteModal

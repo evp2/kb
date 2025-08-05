@@ -41,7 +41,7 @@ const columnFormSchema = insertColumnSchema.extend({
     .enum(['red', 'blue', 'green', 'yellow', 'purple', 'gray'])
     .default('blue'),
   position: z.number().default(0),
-  showSlider: z.number().min(0).max(1).default(1), // Added showSlider field
+  showSlider: z.boolean().default(true), // Fixed showSlider field type
 });
 
 type ColumnFormValues = z.infer<typeof columnFormSchema>;
@@ -49,6 +49,7 @@ type ColumnFormValues = z.infer<typeof columnFormSchema>;
 interface ColumnModalProps {
   isOpen: boolean;
   onClose: () => void;
+  columns?: Array<{ position: number }>; // Added columns prop to get current positions
 }
 
 const colorOptions = [
@@ -60,9 +61,12 @@ const colorOptions = [
   { value: 'gray', color: 'bg-gray-500' },
 ];
 
-export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
+export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Calculate the next position (at the end)
+  const nextPosition = columns.length > 0 ? columns.length + 1 : 0;
 
   const form = useForm<ColumnFormValues>({
     resolver: zodResolver(columnFormSchema),
@@ -170,10 +174,8 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value === 1}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked ? 1 : 0)
-                      }
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
                 </FormItem>
