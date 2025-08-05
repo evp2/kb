@@ -65,12 +65,12 @@ export class MemStorage implements IStorage {
 
   private initializeDefaultColumns() {
     const defaultColumns: Column[] = [
-      { 
+      {
         id: 1,
         title: 'To Do',
         color: 'gray',
         position: 0,
-        showSlider: 1
+        showSlider: 1,
       },
       {
         id: 2,
@@ -86,12 +86,12 @@ export class MemStorage implements IStorage {
         position: 2,
         showSlider: 1,
       },
-      { 
+      {
         id: 4,
         title: 'Done',
         color: 'green',
         position: 3,
-        showSlider: 0
+        showSlider: 0,
       },
     ];
 
