@@ -1,4 +1,4 @@
-import { Plus, Columns } from 'lucide-react';
+import { Plus, Columns, Github } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +39,12 @@ export default function KanbanSidebar({
                 <SidebarMenuButton onClick={onAddColumn} className="w-full">
                   <Columns size={16} />
                   <span>Add Column</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton className="w-full">
+                  <Github size={16} />
+                  <span>Import from GitHub</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

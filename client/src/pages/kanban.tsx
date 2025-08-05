@@ -7,6 +7,7 @@ import TaskModal from '@/components/kanban/task-modal';
 import ColumnModal from '@/components/kanban/column-modal';
 import DeleteModal from '@/components/kanban/delete-modal';
 import KanbanSidebar from '@/components/kanban/kanban-sidebar';
+import GitHubImportModal from '@/components/kanban/github-import-modal';
 import {
   SidebarProvider,
   SidebarInset,
@@ -20,6 +21,7 @@ export default function KanbanPage() {
 
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGitHubImportModalOpen, setIsGitHubImportModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
   const [selectedColumnId, setSelectedColumnId] = useState<number | null>(null);
@@ -60,6 +62,14 @@ export default function KanbanPage() {
     setDeletingTaskId(null);
   };
 
+  const handleOpenGitHubImportModal = () => {
+    setIsGitHubImportModalOpen(true);
+  };
+
+  const handleCloseGitHubImportModal = () => {
+    setIsGitHubImportModalOpen(false);
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.ctrlKey && e.key === 'n') {
       e.preventDefault();
@@ -69,6 +79,7 @@ export default function KanbanPage() {
       setIsTaskModalOpen(false);
       setIsColumnModalOpen(false);
       setIsDeleteModalOpen(false);
+      setIsGitHubImportModalOpen(false);
     }
   };
 
@@ -95,6 +106,7 @@ export default function KanbanPage() {
         <KanbanSidebar
           onAddTask={() => handleOpenTaskModal()}
           onAddColumn={() => setIsColumnModalOpen(true)}
+          onImportFromGitHub={handleOpenGitHubImportModal}
         />
 
         <SidebarInset className="flex-1">
@@ -165,6 +177,12 @@ export default function KanbanPage() {
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         taskId={deletingTaskId}
+      />
+
+      <GitHubImportModal
+        isOpen={isGitHubImportModalOpen}
+        onClose={handleCloseGitHubImportModal}
+        columns={columns}
       />
     </SidebarProvider>
   );
