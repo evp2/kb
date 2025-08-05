@@ -7,6 +7,85 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1"
     />
+    <!-- Meta tags will be injected by the app -->
+    <script type="module">
+      import { APP_CONFIG, getAbsoluteUrl } from './src/config/app.ts';
+
+      // Set title
+      document.title = APP_CONFIG.title;
+
+      // Helper function to create meta tag
+      const createMeta = (name, content, property = false) => {
+        const meta = document.createElement('meta');
+        if (property) {
+          meta.setAttribute('property', name);
+        } else {
+          meta.setAttribute('name', name);
+        }
+        meta.setAttribute('content', content);
+        document.head.appendChild(meta);
+      };
+
+      // Primary Meta Tags
+      createMeta('title', APP_CONFIG.title);
+      createMeta('description', APP_CONFIG.description);
+      createMeta('keywords', APP_CONFIG.keywords);
+      createMeta('author', APP_CONFIG.author);
+      createMeta('robots', 'index, follow');
+
+      // Open Graph / Facebook
+      createMeta('og:type', 'website', true);
+      createMeta('og:url', APP_CONFIG.baseUrl, true);
+      createMeta('og:title', APP_CONFIG.name, true);
+      createMeta('og:description', APP_CONFIG.description, true);
+      createMeta('og:image', getAbsoluteUrl(APP_CONFIG.social.image), true);
+      createMeta('og:site_name', APP_CONFIG.social.siteName, true);
+
+      // Twitter
+      createMeta('twitter:card', 'summary_large_image', true);
+      createMeta('twitter:url', APP_CONFIG.baseUrl, true);
+      createMeta('twitter:title', APP_CONFIG.name, true);
+      createMeta('twitter:description', APP_CONFIG.description, true);
+      createMeta('twitter:image', getAbsoluteUrl(APP_CONFIG.social.image), true);
+
+      // Additional Meta Tags
+      createMeta('theme-color', APP_CONFIG.themeColor);
+      createMeta('application-name', APP_CONFIG.name);
+      createMeta('apple-mobile-web-app-capable', 'yes');
+      createMeta('apple-mobile-web-app-status-bar-style', 'default');
+      createMeta('apple-mobile-web-app-title', APP_CONFIG.name);
+
+      // Structured Data
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": APP_CONFIG.name,
+        "description": APP_CONFIG.description,
+        "url": APP_CONFIG.baseUrl,
+        "applicationCategory": "ProductivityApplication",
+        "operatingSystem": "Web",
+        "browserRequirements": "Modern web browser with JavaScript enabled",
+        "softwareVersion": APP_CONFIG.version,
+        "author": {
+          "@type": "Organization",
+          "name": APP_CONFIG.author
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+    </script>
+
+    <!-- Favicon variations -->
+    <link rel="apple-touch-icon" href="./square-kanban.png" />
+    <link rel="shortcut icon" href="./square-kanban.png" />
   </head>
   <body>
     <div id="root"></div>
