@@ -263,19 +263,13 @@ export class MemStorage implements IStorage {
     const column = this.columns.get(id);
     if (!column) return false;
 
-    // Move all tasks from this column to the first available column
     const tasks = Array.from(this.tasks.values()).filter(
       (task) => task.columnId === id
     );
-    const remainingColumns = Array.from(this.columns.values()).filter(
-      (col) => col.id !== id
-    );
 
-    if (remainingColumns.length > 0) {
-      const targetColumnId = remainingColumns[0].id;
-      tasks.forEach((task) => {
-        task.columnId = targetColumnId;
-      });
+    // prevent deletion if there are tasks in the column
+    if (tasks.length > 0) {
+      return false;
     }
 
     this.columns.delete(id);
