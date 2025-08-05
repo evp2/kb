@@ -59,7 +59,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const success = await storage.deleteColumn(id);
 
       if (!success) {
-        return res.status(403).json({ message: 'Cannot delete column with tasks.' });
+        return res
+          .status(403)
+          .json({ message: 'Cannot delete column with tasks.' });
       }
 
       res.status(204).send();
