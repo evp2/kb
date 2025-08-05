@@ -65,15 +65,15 @@ export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnMod
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Calculate the next position (at the end)
-  const nextPosition = columns.length > 0 ? columns.length : 0;
+  
+  const nextColumn = columns.length > 0 ? columns.length + 1 : 0;
 
   const form = useForm<ColumnFormValues>({
     resolver: zodResolver(columnFormSchema),
     defaultValues: {
       title: '',
       color: 'blue',
-      position: nextPosition,
+      position: nextColumn,
       showSlider: 1, // Added showSlider default value
     },
   });
