@@ -90,6 +90,32 @@ export default function KanbanBoard({
     },
   });
 
+  const deleteColumnMutation = useMutation({
+    mutationFn: async (columnId: number) => {
+      const response = await apiRequest('DELETE', `/api/columns/${columnId}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete column');
+      }
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/columns'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      toast({
+        title: 'Column deleted successfully',
+        description: 'The column has been removed.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error deleting column',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
   const handleMoveTask = (
     taskId: number,
     targetColumnId: number,
@@ -104,6 +130,10 @@ export default function KanbanBoard({
 
   const handleMoveColumn = (columnId: number, targetPosition: number) => {
     moveColumnMutation.mutate({ columnId, position: targetPosition });
+  };
+
+  const handleDeleteColumn = (columnId: number) => {
+    deleteColumnMutation.mutate(columnId);
   };
 
   const getTasksForColumn = (columnId: number) => {
@@ -129,6 +159,7 @@ export default function KanbanBoard({
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
               onAddTask={onAddTask}
+              onDeleteColumn={handleDeleteColumn}
             />
           </ColumnDropZone>
         ))}
