@@ -1,7 +1,13 @@
 import { Column, Task } from '@shared/schema';
 import { useDropTask, useDragColumn } from '@/lib/drag-drop';
 import { Button } from '@/components/ui/button';
-import { Plus, MoreHorizontal } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Plus, MoreHorizontal, Trash2 } from 'lucide-react';
 import TaskCard from './task-card';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +23,7 @@ interface KanbanColumnProps {
   onEditTask: (columnId: number, task?: Task) => void;
   onDeleteTask: (taskId: number) => void;
   onAddTask: (columnId: number) => void;
+  onDeleteColumn: (columnId: number) => void;
 }
 
 export default function KanbanColumn({
@@ -27,6 +34,7 @@ export default function KanbanColumn({
   onEditTask,
   onDeleteTask,
   onAddTask,
+  onDeleteColumn,
 }: KanbanColumnProps) {
   const {
     isOver: isTaskOver,
@@ -98,13 +106,26 @@ export default function KanbanColumn({
               {tasks.length}
             </span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <MoreHorizontal size={16} />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <MoreHorizontal size={16} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => onDeleteColumn(column.id)}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Column
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Tasks Container */}

@@ -106,7 +106,9 @@ async function setupApp() {
       const success = await storage.deleteColumn(id);
 
       if (!success) {
-        return res.status(404).json({ message: 'Column not found' });
+        return res
+          .status(403)
+          .json({ message: 'Cannot delete column with tasks.' });
       }
 
       res.status(204).send();
