@@ -268,9 +268,7 @@ export class MemStorage implements IStorage {
     );
 
     // prevent deletion if there are tasks in the column
-    if (tasks.length > 0) {
-      return false;
-    }
+    if (tasks.length > 0) return false;
 
     this.columns.delete(id);
 
