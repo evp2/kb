@@ -5,6 +5,7 @@ import {
   serial,
   integer,
   timestamp,
+  smallserial,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
@@ -16,7 +17,7 @@ export const columns = pgTable('columns', {
   title: text('title').notNull(),
   color: text('color').notNull().default('blue'),
   position: integer('position').notNull(),
-  showSlider: boolean('show_slider').notNull().default(false),
+  showSlider: integer('show_slider').notNull().default(0),
 });
 
 export const tasks = pgTable('tasks', {

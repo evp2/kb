@@ -69,7 +69,7 @@ export default function ColumnModal({ isOpen, onClose }: ColumnModalProps) {
     defaultValues: {
       title: '',
       color: 'blue',
-      position: 0,
+      position: 5,
       showSlider: 1, // Added showSlider default value
     },
   });
