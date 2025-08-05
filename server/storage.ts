@@ -70,7 +70,7 @@ export class MemStorage implements IStorage {
         title: 'To Do',
         color: 'gray',
         position: 0,
-        showSlider: 1,
+        showSlider: 0,
       },
       {
         id: 2,
@@ -98,7 +98,7 @@ export class MemStorage implements IStorage {
     defaultColumns.forEach((column) => {
       this.columns.set(column.id, column);
     });
-    this.currentColumnId = 4;
+    this.currentColumnId = 5;
   }
 
   private initializeDefaultTasks() {
@@ -241,7 +241,6 @@ export class MemStorage implements IStorage {
     const column: Column = {
       ...insertColumn,
       id,
-      position: this.columns.size,
       color: insertColumn.color || 'default',
     };
     this.columns.set(id, column);
