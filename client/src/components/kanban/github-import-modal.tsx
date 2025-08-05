@@ -142,6 +142,14 @@ export default function GitHubImportModal({
         return;
       }
 
+      //fetch the index of the next task position in the first column
+      const existingTasksResponse = await apiRequest('GET', '/api/tasks');
+      const existingTasks = await existingTasksResponse.json();
+      const existingTasksInFirstColumn = existingTasks.filter(
+        (task: { columnId: number }) => task.columnId === firstColumn.id
+      );
+      let nextPosition = existingTasksInFirstColumn.length;
+
       // Convert GitHub issues to tasks
       const tasks = issues
         .filter((issue) => !issue.html_url.includes('/pull/')) // Filter out pull requests
@@ -149,7 +157,7 @@ export default function GitHubImportModal({
           title: `#${issue.number}: ${issue.title}`,
           description: issue.body || 'No description provided',
           columnId: firstColumn.id,
-          position: index,
+          position: nextPosition++,
         }));
 
       if (tasks.length === 0) {
