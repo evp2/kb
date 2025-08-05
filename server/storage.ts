@@ -70,7 +70,7 @@ export class MemStorage implements IStorage {
         title: 'To Do',
         color: 'gray',
         position: 0,
-        showSlider: 1,
+        showSlider: 0,
       },
       {
         id: 2,

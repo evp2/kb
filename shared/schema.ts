@@ -1,11 +1,9 @@
 import {
-  boolean,
   pgTable,
   text,
   serial,
   integer,
   timestamp,
-  smallserial,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';

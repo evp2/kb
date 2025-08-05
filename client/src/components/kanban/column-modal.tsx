@@ -41,7 +41,7 @@ const columnFormSchema = insertColumnSchema.extend({
     .enum(['red', 'blue', 'green', 'yellow', 'purple', 'gray'])
     .default('blue'),
   position: z.number().default(0),
-  showSlider: z.boolean().default(true), // Fixed showSlider field type
+  showSlider: z.number().default(0),
 });
 
 type ColumnFormValues = z.infer<typeof columnFormSchema>;
@@ -66,14 +66,14 @@ export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnMod
   const { toast } = useToast();
 
   // Calculate the next position (at the end)
-  const nextPosition = columns.length > 0 ? columns.length + 1 : 0;
+  const nextPosition = columns.length > 0 ? columns.length : 0;
 
   const form = useForm<ColumnFormValues>({
     resolver: zodResolver(columnFormSchema),
     defaultValues: {
       title: '',
       color: 'blue',
-      position: 5,
+      position: nextPosition,
       showSlider: 1, // Added showSlider default value
     },
   });
