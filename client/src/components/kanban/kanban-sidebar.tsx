@@ -16,11 +16,13 @@ import { Badge } from '@/components/ui/badge';
 interface KanbanSidebarProps {
   onAddTask: () => void;
   onAddColumn: () => void;
+  onImportFromGitHub: () => void;
 }
 
 export default function KanbanSidebar({
   onAddTask,
   onAddColumn,
+  onImportFromGitHub,
 }: KanbanSidebarProps) {
   return (
     <Sidebar className="bg-white border-r border-gray-200 z-30">
@@ -42,7 +44,7 @@ export default function KanbanSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton className="w-full">
+                <SidebarMenuButton onClick={onImportFromGitHub} className="w-full">
                   <Github size={16} />
                   <span>Import from GitHub</span>
                 </SidebarMenuButton>
