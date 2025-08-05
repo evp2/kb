@@ -17,6 +17,7 @@ import { Users } from 'lucide-react';
 export default function KanbanPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);

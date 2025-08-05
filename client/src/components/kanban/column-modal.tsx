@@ -73,8 +73,8 @@ export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnMod
     defaultValues: {
       title: '',
       color: 'blue',
-      position: nextPosition,
-      showSlider: true, // Fixed showSlider default value
+      position: 5,
+      showSlider: 1, // Added showSlider default value
     },
   });
 
