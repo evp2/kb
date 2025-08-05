@@ -348,7 +348,10 @@ export class MemStorage implements IStorage {
     return updatedTask;
   }
 
-  async moveColumn(id: number, newPosition: number): Promise<Column | undefined> {
+  async moveColumn(
+    id: number,
+    newPosition: number
+  ): Promise<Column | undefined> {
     const column = this.columns.get(id);
     if (!column) return undefined;
 
