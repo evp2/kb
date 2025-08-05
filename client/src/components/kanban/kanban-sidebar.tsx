@@ -44,7 +44,10 @@ export default function KanbanSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={onImportFromGitHub} className="w-full">
+                <SidebarMenuButton
+                  onClick={onImportFromGitHub}
+                  className="w-full"
+                >
                   <Github size={16} />
                   <span>Import from GitHub</span>
                 </SidebarMenuButton>

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -42,7 +41,14 @@ export default function GitHubImportModal({
   const { toast } = useToast();
 
   const importTasksMutation = useMutation({
-    mutationFn: async (tasks: { title: string; description: string; columnId: number; position: number }[]) => {
+    mutationFn: async (
+      tasks: {
+        title: string;
+        description: string;
+        columnId: number;
+        position: number;
+      }[]
+    ) => {
       const promises = tasks.map((task) =>
         apiRequest('POST', '/api/tasks', task)
       );
@@ -101,7 +107,8 @@ export default function GitHubImportModal({
     if (columns.length === 0) {
       toast({
         title: 'No columns available',
-        description: 'Please create at least one column before importing issues.',
+        description:
+          'Please create at least one column before importing issues.',
         variant: 'destructive',
       });
       return;
@@ -112,14 +119,16 @@ export default function GitHubImportModal({
     try {
       // Get the first column (sorted by position)
       const firstColumn = columns.sort((a, b) => a.position - b.position)[0];
-      
+
       // Fetch issues from GitHub API
       const response = await fetch(
         `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/issues?state=open&per_page=50`
       );
 
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `GitHub API error: ${response.status} ${response.statusText}`
+        );
       }
 
       const issues: GitHubIssue[] = await response.json();
@@ -135,7 +144,7 @@ export default function GitHubImportModal({
 
       // Convert GitHub issues to tasks
       const tasks = issues
-        .filter(issue => !issue.html_url.includes('/pull/')) // Filter out pull requests
+        .filter((issue) => !issue.html_url.includes('/pull/')) // Filter out pull requests
         .map((issue, index) => ({
           title: `#${issue.number}: ${issue.title}`,
           description: issue.body || 'No description provided',
@@ -146,7 +155,8 @@ export default function GitHubImportModal({
       if (tasks.length === 0) {
         toast({
           title: 'No issues to import',
-          description: 'All items in this repository are pull requests, not issues.',
+          description:
+            'All items in this repository are pull requests, not issues.',
         });
         setIsLoading(false);
         return;
@@ -156,7 +166,10 @@ export default function GitHubImportModal({
     } catch (error) {
       toast({
         title: 'Error fetching issues',
-        description: error instanceof Error ? error.message : 'Failed to fetch issues from GitHub',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch issues from GitHub',
         variant: 'destructive',
       });
     } finally {
@@ -170,8 +183,13 @@ export default function GitHubImportModal({
         <DialogHeader>
           <DialogTitle>Import Issues from GitHub</DialogTitle>
           <DialogDescription>
-            Enter the URL of a public GitHub repository to import its open issues to your Kanban board.
-            Issues will be imported to the first column: <strong>{columns.sort((a, b) => a.position - b.position)[0]?.title || 'No columns available'}</strong>
+            Enter the URL of a public GitHub repository to import its open
+            issues to your Kanban board. Issues will be imported to the first
+            column:{' '}
+            <strong>
+              {columns.sort((a, b) => a.position - b.position)[0]?.title ||
+                'No columns available'}
+            </strong>
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
