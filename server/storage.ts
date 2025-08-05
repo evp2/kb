@@ -65,12 +65,12 @@ export class MemStorage implements IStorage {
 
   private initializeDefaultColumns() {
     const defaultColumns: Column[] = [
-      { 
+      {
         id: 1,
         title: 'To Do',
         color: 'gray',
         position: 0,
-        showSlider: 1
+        showSlider: 1,
       },
       {
         id: 2,
@@ -86,12 +86,12 @@ export class MemStorage implements IStorage {
         position: 2,
         showSlider: 1,
       },
-      { 
+      {
         id: 4,
         title: 'Done',
         color: 'green',
         position: 3,
-        showSlider: 0
+        showSlider: 0,
       },
     ];
 
@@ -349,7 +349,10 @@ export class MemStorage implements IStorage {
     return updatedTask;
   }
 
-  async moveColumn(id: number, newPosition: number): Promise<Column | undefined> {
+  async moveColumn(
+    id: number,
+    newPosition: number
+  ): Promise<Column | undefined> {
     const column = this.columns.get(id);
     if (!column) return undefined;
 

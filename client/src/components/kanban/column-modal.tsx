@@ -61,7 +61,11 @@ const colorOptions = [
   { value: 'gray', color: 'bg-gray-500' },
 ];
 
-export default function ColumnModal({ isOpen, onClose, columns = [] }: ColumnModalProps) {
+export default function ColumnModal({
+  isOpen,
+  onClose,
+  columns = [],
+}: ColumnModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
