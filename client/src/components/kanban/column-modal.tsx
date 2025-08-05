@@ -69,7 +69,6 @@ export default function ColumnModal({
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  
   const nextColumn = columns.length > 0 ? columns.length + 1 : 0;
 
   const form = useForm<ColumnFormValues>({
