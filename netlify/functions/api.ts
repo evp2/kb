@@ -49,7 +49,6 @@ async function setupApp() {
   );
   const { z } = await import('zod');
 
-  
   // Column routes
   router.get('/api/columns', async (req, res) => {
     try {
