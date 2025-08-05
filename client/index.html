@@ -46,7 +46,11 @@
       createMeta('twitter:url', APP_CONFIG.baseUrl, true);
       createMeta('twitter:title', APP_CONFIG.name, true);
       createMeta('twitter:description', APP_CONFIG.description, true);
-      createMeta('twitter:image', getAbsoluteUrl(APP_CONFIG.social.image), true);
+      createMeta(
+        'twitter:image',
+        getAbsoluteUrl(APP_CONFIG.social.image),
+        true
+      );
 
       // Additional Meta Tags
       createMeta('theme-color', APP_CONFIG.themeColor);
@@ -57,24 +61,24 @@
 
       // Structured Data
       const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": APP_CONFIG.name,
-        "description": APP_CONFIG.description,
-        "url": APP_CONFIG.baseUrl,
-        "applicationCategory": "ProductivityApplication",
-        "operatingSystem": "Web",
-        "browserRequirements": "Modern web browser with JavaScript enabled",
-        "softwareVersion": APP_CONFIG.version,
-        "author": {
-          "@type": "Organization",
-          "name": APP_CONFIG.author
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: APP_CONFIG.name,
+        description: APP_CONFIG.description,
+        url: APP_CONFIG.baseUrl,
+        applicationCategory: 'ProductivityApplication',
+        operatingSystem: 'Web',
+        browserRequirements: 'Modern web browser with JavaScript enabled',
+        softwareVersion: APP_CONFIG.version,
+        author: {
+          '@type': 'Organization',
+          name: APP_CONFIG.author,
         },
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+        },
       };
 
       const script = document.createElement('script');
