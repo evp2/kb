@@ -75,7 +75,7 @@ The application follows a modern full-stack architecture with clear separation b
 
 - **ESBuild**: Server-side bundling for production
 - **TSX**: Development server for TypeScript execution
-- **Replit Integration**: Custom plugins for Replit environment
+- **GitHub Integration**: Custom CI actions for GitHub contributions and deployment previews for Pull requests
 
 ## Deployment Strategy
 
